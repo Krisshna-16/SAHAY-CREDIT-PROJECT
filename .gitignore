@@ -5,3 +5,14 @@ node_modules/
 Thumbs.db
 scratch/
 .tempmediaStorage/
+
+# Large data files — not suitable for Git
+ml/data/raw/
+ml/data/processed/*.parquet
+ml/models/archive/
+ml/models/sahaycredit_xgb.json
+
+# Python cache
+__pycache__/
+*.pyc
+.venv/

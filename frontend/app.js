@@ -747,6 +747,31 @@ function bindEvents() {
   dom.langBtn.addEventListener('click', toggleLanguage);
   bindRbiEvents();
 
+  // Mobile Hub Drawer Listeners
+  const hubToggleBtn = document.getElementById('demo-hub-toggle-btn');
+  const hubDrawer = document.getElementById('mobile-demo-hub-drawer');
+  const hubCloseBtn = document.getElementById('close-hub-drawer-btn');
+  const hubOverlay = document.getElementById('mobile-hub-overlay');
+  const mobileOnboardingBtn = document.getElementById('btn-mobile-onboarding');
+
+  if (hubToggleBtn && hubDrawer && hubOverlay) {
+    hubToggleBtn.addEventListener('click', () => {
+      hubDrawer.style.transform = 'translateY(0)';
+      hubOverlay.style.opacity = '1';
+      hubOverlay.style.pointerEvents = 'auto';
+    });
+
+    const closeHub = () => {
+      hubDrawer.style.transform = 'translateY(105%)';
+      hubOverlay.style.opacity = '0';
+      hubOverlay.style.pointerEvents = 'none';
+    };
+
+    if (hubCloseBtn) hubCloseBtn.addEventListener('click', closeHub);
+    hubOverlay.addEventListener('click', closeHub);
+    if (mobileOnboardingBtn) mobileOnboardingBtn.addEventListener('click', closeHub);
+  }
+
   // Welcome Screen -> Start (Proceed to Consent Screen first)
   dom.startBtn.addEventListener('click', () => {
     navigateTo('consent-screen');
@@ -1171,6 +1196,97 @@ function translateUI() {
   }
 }
 
+// API POST Submission (tries server first, falls back to client engine)
+async function submitAnswersToAPI() {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000); // 8s timeout for composite
+
+    // Generate a session borrower ID for consent tracking
+    const borrowerId = 'borrower-' + Date.now().toString(36);
+    state.borrowerId = borrowerId;
+
+    // Check consent toggle states
+    const ecomConsent = document.getElementById('consent-ecom-toggle')?.checked || false;
+    const merchantConsent = document.getElementById('consent-gst-toggle')?.checked || false;
+    const isMSME = merchantConsent; // Merchant toggle implies MSME
+
+    // Grant consent via API for checked sources
+    if (ecomConsent) {
+      try {
+        await fetch('/api/consent/grant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ borrowerId, sourceId: 'ecommerce' })
+        });
+      } catch (e) { /* non-fatal */ }
+    }
+    if (merchantConsent) {
+      try {
+        await fetch('/api/consent/grant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ borrowerId, sourceId: 'merchantRatings' })
+        });
+      } catch (e) { /* non-fatal */ }
+    }
+
+    // Build request body with optional alt-data
+    const requestBody = {
+      answers: state.answers,
+      borrowerId
+    };
+
+    // Sample e-commerce data (Olist-schema compatible demo)
+    if (ecomConsent) {
+      requestBody.ecommerceData = [
+        { date: '2025-06-01', amount: 1500, category: 'electronics', reviewScore: 5, wasLate: false },
+        { date: '2025-07-10', amount: 850, category: 'clothing', reviewScore: 4, wasLate: false },
+        { date: '2025-08-15', amount: 2200, category: 'groceries', reviewScore: 5, wasLate: false },
+        { date: '2025-09-05', amount: 680, category: 'home', reviewScore: 3, wasLate: true },
+        { date: '2025-10-20', amount: 1100, category: 'electronics', reviewScore: 4, wasLate: false },
+        { date: '2025-11-12', amount: 950, category: 'personal_care', reviewScore: 5, wasLate: false },
+        { date: '2025-12-01', amount: 3200, category: 'electronics', reviewScore: 4, wasLate: false },
+        { date: '2026-01-18', amount: 750, category: 'clothing', reviewScore: 5, wasLate: false }
+      ];
+    }
+
+    // Sample merchant review data (Yelp-schema compatible demo)
+    if (merchantConsent) {
+      requestBody.isMSME = true;
+      requestBody.merchantData = [
+        { date: '2025-04-01', rating: 4, text: 'Good service and quality products. Recommend.' },
+        { date: '2025-05-15', rating: 5, text: 'Excellent experience, very professional and fast delivery.' },
+        { date: '2025-06-20', rating: 3, text: 'Average quality, slow response to questions.' },
+        { date: '2025-07-10', rating: 5, text: 'Amazing! Best in the area. Great customer care.' },
+        { date: '2025-08-25', rating: 4, text: 'Reliable and consistent quality. Would buy again.' },
+        { date: '2025-09-30', rating: 2, text: 'Wrong item sent, had to return. Disappointing.' },
+        { date: '2025-10-15', rating: 5, text: 'Outstanding service, quick and efficient.' },
+        { date: '2025-11-01', rating: 4, text: 'Good overall, friendly and helpful staff.' },
+        { date: '2025-12-20', rating: 5, text: 'Perfect. Love this shop, best quality.' },
+        { date: '2026-01-05', rating: 4, text: 'Great quality, comfortable and beautiful products.' }
+      ];
+    }
+
+    const response = await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const result = await response.json();
+    if (result && result.success) {
+      state.scoreData = result.data;
+      return true;
+    }
+    return false;
+  } catch (error) {
+    // Network unavailable or timeout — client-side engine will handle it
+    console.info('SahayCredit: API unavailable, client-side engine ready.');
+    return false;
+  }
+}
 // Sync segmented progress bar
 function updateBorrowerProgress(screenId) {
   const steps = ['welcome-screen', 'consent-screen', 'rbi-link-screen', 'quiz-screen', 'processing-screen', 'result-screen', 'shap-screen', 'comparison-screen', 'emi-planner-screen'];
@@ -1499,30 +1615,6 @@ function calculateScoreClientSide(answers) {
   };
 }
 
-// API POST Submission (tries server first, falls back to client engine)
-async function submitAnswersToAPI() {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
-    const response = await fetch('/api/score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers: state.answers }),
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
-    const result = await response.json();
-    if (result && result.success) {
-      state.scoreData = result.data;
-      return true;
-    }
-    return false;
-  } catch (error) {
-    // Network unavailable or timeout — client-side engine will handle it
-    console.info('SahayCredit: API unavailable, client-side engine ready.');
-    return false;
-  }
-}
 
 // Render Results Dashboard View
 function renderCalculatedResults() {
@@ -1570,9 +1662,159 @@ function renderCalculatedResults() {
     dom.limitSub.textContent = t.limitSub;
   }
 
+  // Render Composite Breakdown
+  const compositeContainer = document.getElementById('composite-breakdown-container');
+  const compositeList = document.getElementById('composite-breakdown-list');
+  const compositeExplanation = document.getElementById('composite-explanation-text');
+
+  if (compositeContainer && compositeList && compositeExplanation) {
+    if (data.compositeBreakdown) {
+      compositeContainer.style.display = 'block';
+      compositeList.innerHTML = '';
+      
+      const isHi = lang === 'hi';
+      document.getElementById('composite-breakdown-headline').textContent = isHi 
+        ? 'कम्पोजिट स्कोर वेटेज विवरण' 
+        : 'Composite Score Weights';
+
+      Object.entries(data.compositeBreakdown).forEach(([key, value]) => {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.flexDirection = 'column';
+        item.style.gap = '4px';
+        item.style.padding = '8px';
+        item.style.background = 'rgba(255, 255, 255, 0.01)';
+        item.style.borderRadius = '8px';
+        item.style.border = '1px solid rgba(255, 255, 255, 0.03)';
+
+        const header = document.createElement('div');
+        header.style.display = 'flex';
+        header.style.justifyContent = 'space-between';
+        header.style.fontSize = '0.78rem';
+        header.style.fontWeight = '600';
+        header.style.color = 'var(--text-main)';
+
+        const label = document.createElement('span');
+        label.textContent = value.label;
+        
+        const weightSpan = document.createElement('span');
+        weightSpan.textContent = `${Math.round(value.weight * 100)}% weight`;
+        weightSpan.style.color = 'var(--secondary)';
+
+        header.appendChild(label);
+        header.appendChild(weightSpan);
+        item.appendChild(header);
+
+        // Score info
+        const scoreInfo = document.createElement('div');
+        scoreInfo.style.display = 'flex';
+        scoreInfo.style.justifyContent = 'space-between';
+        scoreInfo.style.fontSize = '0.72rem';
+        scoreInfo.style.color = 'var(--text-muted)';
+        scoreInfo.style.marginTop = '2px';
+
+        const scoreText = document.createElement('span');
+        if (key === 'core') {
+          scoreText.textContent = isHi ? `कोर वित्तीय स्कोर: ${value.score}` : `Core Financial Score: ${value.score}`;
+        } else {
+          scoreText.textContent = isHi ? `वैकल्पिक सब-स्कोर: ${value.subScore}/100` : `Alt Sub-Score: ${value.subScore}/100`;
+        }
+
+        scoreInfo.appendChild(scoreText);
+        item.appendChild(scoreInfo);
+
+        compositeList.appendChild(item);
+      });
+
+      compositeExplanation.textContent = isHi && data.compositeExplanation
+        ? data.compositeExplanation.replace('Composite from', 'कम्पोजिट विवरण:').replace('Core model', 'कोर मॉडल').replace('E-commerce', 'ई-कॉमर्स').replace('Merchant ratings', 'व्यापारी रेटिंग')
+        : (data.compositeExplanation || '');
+    } else {
+      compositeContainer.style.display = 'none';
+    }
+  }
+
+  // Render Data Sources Indicator (e.g. "Score based on 2 of 3 available data sources")
+  const dsIndicator = document.getElementById('data-sources-indicator');
+  const dsIndicatorText = document.getElementById('data-sources-indicator-text');
+  if (dsIndicator && dsIndicatorText) {
+    const isHi = lang === 'hi';
+    const sourceCount = data.sourceCount || (data.compositeBreakdown ? Object.keys(data.compositeBreakdown).length : 1);
+    const totalAvailable = 3; // core + ecommerce + merchant
+    dsIndicator.style.display = 'inline-block';
+    dsIndicatorText.textContent = isHi
+      ? `स्कोर ${totalAvailable} में से ${sourceCount} उपलब्ध डेटा स्रोतों पर आधारित`
+      : `Score based on ${sourceCount} of ${totalAvailable} available data sources`;
+  }
+
+  // Render Manage Data Permissions Panel
+  const permPanel = document.getElementById('manage-permissions-panel');
+  const permList = document.getElementById('permissions-list');
+  if (permPanel && permList && state.borrowerId) {
+    const isHi = lang === 'hi';
+    const ecomConsented = document.getElementById('consent-ecom-toggle')?.checked || false;
+    const merchantConsented = document.getElementById('consent-gst-toggle')?.checked || false;
+
+    if (ecomConsented || merchantConsented) {
+      permPanel.style.display = 'block';
+      const permHeadline = document.getElementById('permissions-headline');
+      if (permHeadline) {
+        permHeadline.textContent = isHi ? 'डेटा अनुमतियाँ प्रबंधित करें' : 'Manage Data Permissions';
+      }
+      permList.innerHTML = '';
+
+      const sources = [
+        { id: 'ecommerce', active: ecomConsented, labelEn: 'E-Commerce Purchase History', labelHi: 'ई-कॉमर्स खरीद इतिहास' },
+        { id: 'merchantRatings', active: merchantConsented, labelEn: 'Business/Merchant Ratings', labelHi: 'व्यापार/व्यापारी रेटिंग' }
+      ];
+
+      sources.forEach(src => {
+        if (!src.active) return;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:rgba(255,255,255,0.01); border-radius:8px; border:1px solid rgba(255,255,255,0.03);';
+
+        const info = document.createElement('div');
+        info.style.cssText = 'display:flex; flex-direction:column; gap:2px;';
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = 'font-size:0.76rem; font-weight:600; color:var(--text-main);';
+        nameSpan.textContent = isHi ? src.labelHi : src.labelEn;
+        const statusSpan = document.createElement('span');
+        statusSpan.style.cssText = 'font-size:0.68rem; color:var(--accent);';
+        statusSpan.textContent = isHi ? '✓ सहमति दी गई' : '✓ Consent granted';
+        info.appendChild(nameSpan);
+        info.appendChild(statusSpan);
+
+        const revokeBtn = document.createElement('button');
+        revokeBtn.style.cssText = 'font-size:0.68rem; padding:4px 10px; border-radius:6px; border:1px solid rgba(255,100,100,0.3); background:rgba(255,100,100,0.08); color:#ff6b6b; cursor:pointer; font-weight:600; transition:all 0.2s;';
+        revokeBtn.textContent = isHi ? 'वापस लें' : 'Revoke';
+        revokeBtn.addEventListener('click', async () => {
+          try {
+            await fetch('/api/consent/revoke', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ borrowerId: state.borrowerId, sourceId: src.id })
+            });
+            statusSpan.textContent = isHi ? '✗ सहमति वापस ली गई' : '✗ Consent revoked';
+            statusSpan.style.color = '#ff6b6b';
+            revokeBtn.disabled = true;
+            revokeBtn.style.opacity = '0.4';
+          } catch (e) { /* non-fatal */ }
+        });
+
+        row.appendChild(info);
+        row.appendChild(revokeBtn);
+        permList.appendChild(row);
+      });
+    } else {
+      permPanel.style.display = 'none';
+    }
+  }
+
   // Calculate and Render Confidence Score Components
   let confidence = 40; // base confidence
-  if (state.consents) {
+  if (data.compositeConfidence !== undefined) {
+    confidence = data.compositeConfidence;
+  } else if (state.consents) {
     if (state.consents.bills && state.simState.mobile >= 6) confidence += 15;
     if (state.consents.upi && state.simState.upi >= 10000) confidence += 15;
     if (state.consents.location && state.simState.geo === 'stable') confidence += 10;

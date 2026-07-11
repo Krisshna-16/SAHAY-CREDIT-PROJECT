@@ -1,0 +1,116 @@
+{
+  "model_version": "v2_20260711",
+  "evaluation_date": "2026-07-11T16:45:08.606156",
+  "test_set_size": 46127,
+  "training_metadata": {
+    "training_mode": "full_optuna",
+    "optuna_trials": 50,
+    "early_stopping_enabled": true,
+    "training_time_seconds": 7.7,
+    "optuna_time_seconds": 1536,
+    "total_pipeline_time_seconds": 1543.7,
+    "best_params": {
+      "n_estimators": 1000,
+      "max_depth": 3,
+      "learning_rate": 0.08813598475052263,
+      "min_child_weight": 7,
+      "subsample": 0.6945628013258798,
+      "colsample_bytree": 0.6999882177768999,
+      "reg_alpha": 6.92274582630245,
+      "reg_lambda": 0.000378795185914426,
+      "scale_pos_weight": 7.519112620838951
+    },
+    "best_iteration": 399,
+    "best_validation_score": 0.7565108688081232,
+    "optuna_best_cv_auc": 0.750362,
+    "previous_quickmode_auc": 0.754775
+  },
+  "metrics": {
+    "roc_auc": 0.756338,
+    "average_precision": 0.241285,
+    "precision": 0.209118,
+    "recall": 0.524705,
+    "f1_score": 0.299051,
+    "log_loss": 0.458449,
+    "brier_score": 0.146375,
+    "ks_statistic": 0.381651,
+    "mcc": 0.237524,
+    "balanced_accuracy": 0.675212,
+    "cohens_kappa": 0.207561
+  },
+  "confusion_matrix": {
+    "true_negatives": 35013,
+    "false_positives": 7390,
+    "false_negatives": 1770,
+    "true_positives": 1954
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.9518799445395971,
+      "recall": 0.8257198783104969,
+      "f1-score": 0.8843229863864824,
+      "support": 42403.0
+    },
+    "1": {
+      "precision": 0.2091181506849315,
+      "recall": 0.5247046186895811,
+      "f1-score": 0.2990511172329354,
+      "support": 3724.0
+    },
+    "accuracy": 0.8014178247013679,
+    "macro avg": {
+      "precision": 0.5804990476122643,
+      "recall": 0.6752122485000389,
+      "f1-score": 0.5916870518097089,
+      "support": 46127.0
+    },
+    "weighted avg": {
+      "precision": 0.8919140911280425,
+      "recall": 0.8014178247013679,
+      "f1-score": 0.8370718657688874,
+      "support": 46127.0
+    }
+  },
+  "feature_importance_top10": [
+    {
+      "feature": "ext_source_3",
+      "importance": 0.169318
+    },
+    {
+      "feature": "ext_source_2",
+      "importance": 0.16076
+    },
+    {
+      "feature": "ext_source_1",
+      "importance": 0.05777
+    },
+    {
+      "feature": "goods_price_ratio",
+      "importance": 0.057373
+    },
+    {
+      "feature": "education_type",
+      "importance": 0.04514
+    },
+    {
+      "feature": "organization_type",
+      "importance": 0.039409
+    },
+    {
+      "feature": "occupation_type",
+      "importance": 0.039307
+    },
+    {
+      "feature": "age_years",
+      "importance": 0.032885
+    },
+    {
+      "feature": "documents_provided",
+      "importance": 0.032344
+    },
+    {
+      "feature": "cash_flow_stability",
+      "importance": 0.030954
+    }
+  ]
+}

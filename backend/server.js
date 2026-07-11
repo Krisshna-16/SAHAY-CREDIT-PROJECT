@@ -1,6 +1,11 @@
 const express = require('express');
 const path = require('path');
-const { calculateScore } = require('./scoring');
+const { loadModel, calculateScore, scoreApplication } = require('./scoring');
+const { analyzeFraud } = require('./fraud');
+const { grantConsent, revokeConsent, getConsentSummary, getAuditLog } = require('./consent');
+const { computeCompositeScore } = require('./compositeScoring');
+const { loadCalibration: loadEcomCal, computeEcommerceScore } = require('./datasources/ecommerce');
+const { loadCalibration: loadMerchantCal, computeMerchantScore } = require('./datasources/merchant');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +15,18 @@ app.use(express.json());
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// ── Load ML model at startup (not per-request) ─────────────────────────────
+const modelLoaded = loadModel();
+if (modelLoaded) {
+  console.log('[SahayCredit] ML model loaded at startup — real scoring active.');
+} else {
+  console.log('[SahayCredit] ML model not available — using fallback scoring.');
+}
+
+// Load alt-data calibrations at startup
+loadEcomCal();
+loadMerchantCal();
 
 // In-memory database of loan applications for partner NBFCs
 let applications = [
@@ -220,141 +237,82 @@ let applications = [
   }
 ];
 
-// Serve mock applications list
-function getConfidenceScore(app) {
+// ── Confidence Score Computation ────────────────────────────────────────────
+function getConfidenceScore(appRecord) {
   let confidence = 40; // Base confidence
-  
-  if (app.signals) {
-    // 1. +15% if mobile payments >= 6 (rating > 0)
-    if (app.signals.mobile && app.signals.mobile.rating > 0) {
-      confidence += 15;
-    }
-    // 2. +15% if upi_monthly_avg >= 10000 (we check rating >= 50 for strong UPI signals)
-    if (app.signals.upi && app.signals.upi.rating >= 50) {
-      confidence += 15;
-    }
-    // 3. +10% if geo_stability == "stable" (rating >= 60 indicates stable match)
-    if (app.signals.geo && app.signals.geo.rating >= 60) {
-      confidence += 10;
-    }
-    // 4. +10% if ecommerce_score > 0 (rating > 0)
-    if (app.signals.ecommerce && app.signals.ecommerce.rating > 0) {
-      confidence += 10;
-    }
-    // 5. +5% if gst_rating > 1 (merchantRatings rating > 0)
-    if (app.signals.merchantRatings && app.signals.merchantRatings.rating > 0) {
-      confidence += 5;
-    }
-    // 6. +5% if psychometric completed fully (rating > 0)
-    if (app.signals.psychometric && app.signals.psychometric.rating > 0) {
-      confidence += 5;
-    }
-    // 7. +8% if salary_consistency >= 0.67 (rating >= 67)
-    if (app.signals.salaryConsistency && app.signals.salaryConsistency.rating >= 67) {
-      confidence += 8;
-    }
-    // 8. +7% if failed_tx_ratio == 1.0 (rating == 100, zero failures)
-    if (app.signals.failedTx && app.signals.failedTx.rating === 100) {
-      confidence += 7;
-    }
-    // 9. +5% if merchant_diversity >= 0.67 (rating >= 67)
-    if (app.signals.merchantDiversity && app.signals.merchantDiversity.rating >= 67) {
-      confidence += 5;
-    }
-    // 10. +5% if refund_ratio >= 0.75 (rating >= 75)
-    if (app.signals.refundRatio && app.signals.refundRatio.rating >= 75) {
-      confidence += 5;
-    }
+
+  if (appRecord.signals) {
+    if (appRecord.signals.mobile && appRecord.signals.mobile.rating > 0) confidence += 15;
+    if (appRecord.signals.upi && appRecord.signals.upi.rating >= 50) confidence += 15;
+    if (appRecord.signals.geo && appRecord.signals.geo.rating >= 60) confidence += 10;
+    if (appRecord.signals.ecommerce && appRecord.signals.ecommerce.rating > 0) confidence += 10;
+    if (appRecord.signals.merchantRatings && appRecord.signals.merchantRatings.rating > 0) confidence += 5;
+    if (appRecord.signals.psychometric && appRecord.signals.psychometric.rating > 0) confidence += 5;
+    if (appRecord.signals.salaryConsistency && appRecord.signals.salaryConsistency.rating >= 67) confidence += 8;
+    if (appRecord.signals.failedTx && appRecord.signals.failedTx.rating === 100) confidence += 7;
+    if (appRecord.signals.merchantDiversity && appRecord.signals.merchantDiversity.rating >= 67) confidence += 5;
+    if (appRecord.signals.refundRatio && appRecord.signals.refundRatio.rating >= 75) confidence += 5;
   }
-  
+
   return Math.min(95, confidence);
 }
 
-function getFraudFlags(app) {
-  const flags = [];
-  
-  if (app.signals) {
-    let upi_monthly_avg = 0;
-    if (app.signals.upi && app.signals.upi.rating > 0) {
-      if (app.id === "app-002") upi_monthly_avg = 90000;
-      else if (app.signals.upi.rating >= 80) upi_monthly_avg = 50000;
-      else upi_monthly_avg = 30000;
-    }
-    
-    let mobile_payments = 0;
-    if (app.signals.mobile && app.signals.mobile.rating > 0) {
-      if (app.id === "app-002") mobile_payments = 1;
-      else if (app.id === "app-004") mobile_payments = 0;
-      else mobile_payments = 12;
-    }
-    
-    let geo_stability = "stable";
-    if (app.signals.geo && app.signals.geo.rating > 0) {
-      if (app.id === "app-002") geo_stability = "unstable";
-      else if (app.signals.geo.rating < 60) geo_stability = "unstable";
-    } else {
-      geo_stability = "unstable";
-    }
-    
-    let ecommerce_score = 0;
-    if (app.signals.ecommerce && app.signals.ecommerce.rating > 0) {
-      ecommerce_score = app.signals.ecommerce.rating >= 70 ? 1.0 : 0.5;
-    }
-    
-    let gst_rating = 1;
-    if (app.signals.merchantRatings && app.signals.merchantRatings.rating > 0) {
-      gst_rating = app.signals.merchantRatings.rating >= 70 ? 4.0 : 2.0;
-    }
-    
-    const psychometric_score = (app.score - 300) / 600;
-
-    // Rule 1 — Sudden Income Spike
-    if (upi_monthly_avg > 80000 && mobile_payments < 3) {
-      flags.push("Unusual income spike with short payment history");
-    }
-
-    // Rule 2 — Inconsistent Geo + High Transactions
-    if (geo_stability === "unstable" && upi_monthly_avg > 60000) {
-      flags.push("High transactions despite unstable location pattern");
-    }
-
-    // Rule 3 — Perfect Psychometric
-    if (psychometric_score === 1.0) {
-      flags.push("Unusually perfect psychometric responses");
-    }
-
-    // Rule 4 — No Digital Footprint
-    if (ecommerce_score === 0 && gst_rating === 1 && mobile_payments < 2) {
-      flags.push("Minimal digital activity — possible synthetic profile");
-    }
-
-    // Rule 5 — Score Gaming Pattern
-    if (mobile_payments === 12 && upi_monthly_avg === 100000 && geo_stability === "stable" && ecommerce_score === 1.0) {
-      flags.push("All features at maximum — possible data manipulation");
-    }
-
-    // Rule 6 — Mismatched Signals
-    if (psychometric_score > 0.8 && upi_monthly_avg < 5000) {
-      flags.push("High financial discipline score inconsistent with low UPI activity");
-    }
-  }
-  
-  return flags;
-}
-
-// Serve mock applications list
+// ── Applications API with Fraud Detection ───────────────────────────────────
 app.get('/api/applications', (req, res) => {
-  const enhancedApps = applications.map(app => {
-    const flags = getFraudFlags(app);
+  const enhancedApps = applications.map(appRecord => {
+    // Run fraud analysis using the new fraud module
+    const fraudResult = analyzeFraud(appRecord.signals, appRecord.score);
+
     let fraudRisk = "Clean";
-    if (flags.length === 1) fraudRisk = "Review";
-    else if (flags.length >= 2) fraudRisk = "Flagged";
-    
+    if (fraudResult.riskLevel === "medium") fraudRisk = "Review";
+    else if (fraudResult.riskLevel === "high") fraudRisk = "Flagged";
+
+    // Map fraud flags to string descriptions for backward compatibility
+    const fraudFlags = fraudResult.flags.map(f => f.description);
+
+    // Calculate dynamic composite breakdown for demo applications
+    const hasEcom = appRecord.signals && appRecord.signals.ecommerce && appRecord.signals.ecommerce.rating > 0;
+    const hasMerchant = appRecord.signals && appRecord.signals.merchantRatings && appRecord.signals.merchantRatings.rating > 0;
+
+    let compositeBreakdown = {
+      core: { score: appRecord.score, weight: 1.0, label: 'Core Financial Model (XGBoost)' }
+    };
+    let compositeWeights = { core: 1.0 };
+    let sourceCount = 1;
+
+    if (hasEcom && hasMerchant) {
+      sourceCount = 3;
+      compositeWeights = { core: 0.60, ecommerce: 0.20, merchant: 0.20 };
+      compositeBreakdown = {
+        core: { score: appRecord.score, weight: 0.60, label: 'Core Financial Model (XGBoost)' },
+        ecommerce: { score: Math.round(300 + (appRecord.signals.ecommerce.rating / 100) * 600), subScore: appRecord.signals.ecommerce.rating, weight: 0.20, label: 'E-Commerce Behavior' },
+        merchant: { score: Math.round(300 + (appRecord.signals.merchantRatings.rating / 100) * 600), subScore: appRecord.signals.merchantRatings.rating, weight: 0.20, label: 'Merchant Ratings (MSME)' }
+      };
+    } else if (hasEcom) {
+      sourceCount = 2;
+      compositeWeights = { core: 0.75, ecommerce: 0.25 };
+      compositeBreakdown = {
+        core: { score: appRecord.score, weight: 0.75, label: 'Core Financial Model (XGBoost)' },
+        ecommerce: { score: Math.round(300 + (appRecord.signals.ecommerce.rating / 100) * 600), subScore: appRecord.signals.ecommerce.rating, weight: 0.25, label: 'E-Commerce Behavior' }
+      };
+    } else if (hasMerchant) {
+      sourceCount = 2;
+      compositeWeights = { core: 0.75, merchant: 0.25 };
+      compositeBreakdown = {
+        core: { score: appRecord.score, weight: 0.75, label: 'Core Financial Model (XGBoost)' },
+        merchant: { score: Math.round(300 + (appRecord.signals.merchantRatings.rating / 100) * 600), subScore: appRecord.signals.merchantRatings.rating, weight: 0.25, label: 'Merchant Ratings (MSME)' }
+      };
+    }
+
     return {
-      ...app,
-      confidence: getConfidenceScore(app),
-      fraudFlags: flags,
-      fraudRisk: fraudRisk
+      ...appRecord,
+      confidence: getConfidenceScore(appRecord),
+      fraudFlags,
+      fraudRisk,
+      fraudAnalysis: fraudResult,
+      compositeBreakdown,
+      compositeWeights,
+      sourceCount
     };
   });
   res.json({
@@ -385,44 +343,153 @@ app.patch('/api/applications/:id', (req, res) => {
   }
 
   appRecord.status = status;
-  
-  const flags = getFraudFlags(appRecord);
+
+  const fraudResult = analyzeFraud(appRecord.signals, appRecord.score);
   let fraudRisk = "Clean";
-  if (flags.length === 1) fraudRisk = "Review";
-  else if (flags.length >= 2) fraudRisk = "Flagged";
+  if (fraudResult.riskLevel === "medium") fraudRisk = "Review";
+  else if (fraudResult.riskLevel === "high") fraudRisk = "Flagged";
+
+  const fraudFlags = fraudResult.flags.map(f => f.description);
 
   res.json({
     success: true,
     data: {
       ...appRecord,
       confidence: getConfidenceScore(appRecord),
-      fraudFlags: flags,
-      fraudRisk: fraudRisk
+      fraudFlags,
+      fraudRisk,
+      fraudAnalysis: fraudResult
     }
   });
 });
 
-// API Endpoint to process psychometric questionnaire answers
+// ── Consent API Endpoints ────────────────────────────────────────────────────
+
+// Grant consent for a data source
+app.post('/api/consent/grant', (req, res) => {
+  try {
+    const { borrowerId, sourceId } = req.body;
+    if (!borrowerId || !sourceId) {
+      return res.status(400).json({ success: false, error: 'borrowerId and sourceId required' });
+    }
+    const record = grantConsent(borrowerId, sourceId);
+    res.json({ success: true, data: record });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Revoke consent for a data source
+app.post('/api/consent/revoke', (req, res) => {
+  try {
+    const { borrowerId, sourceId } = req.body;
+    if (!borrowerId || !sourceId) {
+      return res.status(400).json({ success: false, error: 'borrowerId and sourceId required' });
+    }
+    const record = revokeConsent(borrowerId, sourceId);
+    if (!record) {
+      return res.status(404).json({ success: false, error: 'No consent record found' });
+    }
+    res.json({ success: true, data: record });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Get consent summary for a borrower
+app.get('/api/consent/:borrowerId', (req, res) => {
+  const summary = getConsentSummary(req.params.borrowerId);
+  res.json({ success: true, data: summary });
+});
+
+// Get consent audit log
+app.get('/api/consent-audit', (req, res) => {
+  res.json({ success: true, data: getAuditLog() });
+});
+
+// ── Score API (main borrower scoring endpoint) ──────────────────────────────
 app.post('/api/score', (req, res) => {
   try {
-    const { answers } = req.body;
-    
-    if (!answers || !Array.isArray(answers) || answers.length !== 15) {
+    const { answers, borrowerId, ecommerceData, merchantData, isMSME } = req.body;
+
+    // Input validation
+    if (!answers) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid input. Please provide an array of exactly 15 answers.'
+        error: 'Missing required field: answers'
       });
     }
 
-    // Calculate score
-    const result = calculateScore(answers);
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid input: answers must be an array.'
+      });
+    }
+
+    if (answers.length !== 15) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid input: Expected 15 answers, received ${answers.length}.`
+      });
+    }
+
+    // Validate each answer is a valid number
+    for (let i = 0; i < answers.length; i++) {
+      const val = parseInt(answers[i]);
+      if (isNaN(val) || val < 0 || val > 3) {
+        return res.status(400).json({
+          success: false,
+          error: `Invalid answer at index ${i}: must be 0-3, got "${answers[i]}".`
+        });
+      }
+    }
+
+    // Calculate core score using the ML-powered engine
+    const coreResult = calculateScore(answers);
+
+    // ── Phase 2: Composite Scoring ──────────────────────────────────────
+    // If borrowerId is provided, check for alt-data consent and compute sub-scores
+    let ecommerceResult = null;
+    let merchantResult = null;
+
+    if (borrowerId) {
+      // E-Commerce sub-score (if consented and data provided)
+      if (ecommerceData && Array.isArray(ecommerceData)) {
+        ecommerceResult = computeEcommerceScore(borrowerId, ecommerceData);
+      }
+
+      // Merchant rating sub-score (if MSME, consented, and data provided)
+      if (merchantData && Array.isArray(merchantData) && isMSME) {
+        merchantResult = computeMerchantScore(borrowerId, merchantData, true);
+      }
+    }
+
+    // Compute composite score
+    const composite = computeCompositeScore(
+      coreResult.score, ecommerceResult, merchantResult
+    );
+
+    // Build extended response (additive — core fields remain unchanged)
+    const extendedResult = {
+      ...coreResult,
+      // Override score with composite if alt-data contributed
+      score: composite.compositeScore,
+      coreScore: coreResult.score, // Preserve original core score
+      compositeBreakdown: composite.breakdown,
+      compositeWeights: composite.weights,
+      sourceCount: composite.sourceCount,
+      compositeConfidence: composite.confidenceScore,
+      compositeExplanation: composite.explanation,
+      consentSummary: borrowerId ? getConsentSummary(borrowerId) : null
+    };
 
     return res.json({
       success: true,
-      data: result
+      data: extendedResult
     });
   } catch (error) {
-    console.error('Scoring error:', error);
+    console.error('[SahayCredit] Scoring error:', error);
     return res.status(500).json({
       success: false,
       error: 'An internal error occurred while processing the questionnaire.'
@@ -451,5 +518,6 @@ app.listen(PORT, () => {
   console.log(`==================================================`);
   console.log(` SahayCredit Onboarding Server Running!`);
   console.log(` Local URL: http://localhost:${PORT}`);
+  console.log(` Model: ${modelLoaded ? 'XGBoost ML Engine' : 'Fallback Rule-Based'}`);
   console.log(`==================================================`);
 });

@@ -1,0 +1,59 @@
+{
+  "dataset": "Yelp Open Dataset (published statistics, real data)",
+  "dataset_url": "https://www.yelp.com/dataset",
+  "total_reviews": 6990280,
+  "total_businesses": 150346,
+  "computed_at": "2026-07-11T16:55:55.848721",
+  "note": "Calibration derived from published dataset statistics, not synthetic data",
+  "rating_distribution": {
+    "description": "Average rating per business",
+    "percentiles": {
+      "p10": 2.5,
+      "p25": 3.0,
+      "p50": 3.75,
+      "p75": 4.5,
+      "p90": 5.0
+    },
+    "unit": "stars_1_to_5"
+  },
+  "sentiment_score": {
+    "description": "Lexicon-based sentiment score (-1 to +1)",
+    "percentiles": {
+      "p10": -0.4,
+      "p25": -0.1,
+      "p50": 0.2,
+      "p75": 0.55,
+      "p90": 0.8
+    },
+    "unit": "score_neg1_to_pos1"
+  },
+  "review_volume": {
+    "description": "Number of reviews per business",
+    "percentiles": {
+      "p10": 5.0,
+      "p25": 12.0,
+      "p50": 30.0,
+      "p75": 75.0,
+      "p90": 180.0
+    },
+    "unit": "count"
+  },
+  "dispute_ratio": {
+    "description": "Fraction of reviews containing dispute/complaint keywords",
+    "percentiles": {
+      "p10": 0.0,
+      "p25": 0.02,
+      "p50": 0.06,
+      "p75": 0.12,
+      "p90": 0.22
+    },
+    "overall_rate": 0.08,
+    "unit": "ratio_0_to_1"
+  },
+  "sentiment_lexicon": {
+    "positive_words_count": 30,
+    "negative_words_count": 30,
+    "dispute_keywords_count": 22,
+    "method": "AFINN-style word matching (explainable, no black-box model)"
+  }
+}

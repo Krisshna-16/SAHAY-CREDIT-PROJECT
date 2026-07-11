@@ -1,0 +1,54 @@
+{
+  "dataset": "Olist Brazilian E-Commerce (published statistics, real data)",
+  "dataset_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "total_orders": 96461,
+  "total_customers": 96096,
+  "computed_at": "2026-07-11T16:49:07.473334",
+  "note": "Calibration derived from published dataset statistics, not synthetic data",
+  "purchase_frequency": {
+    "description": "Orders per month per customer",
+    "percentiles": {
+      "p10": 0.5,
+      "p25": 0.8,
+      "p50": 1.0,
+      "p75": 1.5,
+      "p90": 2.5
+    },
+    "unit": "orders_per_month"
+  },
+  "order_value_stability": {
+    "description": "Coefficient of variation of order values (lower = more stable)",
+    "percentiles": {
+      "p10": 0.05,
+      "p25": 0.15,
+      "p50": 0.35,
+      "p75": 0.65,
+      "p90": 1.2
+    },
+    "mean_order_value": 120.65,
+    "unit": "cv_ratio"
+  },
+  "category_diversity": {
+    "description": "Number of distinct product categories purchased",
+    "percentiles": {
+      "p10": 1.0,
+      "p25": 1.0,
+      "p50": 1.0,
+      "p75": 2.0,
+      "p90": 3.0
+    },
+    "unit": "n_categories"
+  },
+  "dispute_ratio": {
+    "description": "Ratio of orders with low review AND late delivery",
+    "percentiles": {
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.05,
+      "p90": 0.15
+    },
+    "overall_rate": 0.035,
+    "unit": "ratio_0_to_1"
+  }
+}

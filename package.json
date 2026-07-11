@@ -8,7 +8,7 @@
     "dev": "node backend/server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.22.2"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -4849,3 +4849,314 @@ input:checked + .vault-slider:before {
   color: var(--secondary);
   opacity: 0.8;
 }
+
+/* ==========================================================================
+   Demo Suite Navigation Hub & Responsive Layout
+   ========================================================================== */
+
+/* Page Wrapper */
+.page-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* Hide desktop hub on smaller screens */
+.demo-hub-desktop {
+  flex: 1;
+  max-width: 520px;
+  background: var(--bg-card-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: var(--shadow-main), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hub-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+}
+
+.hub-header .logo-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hub-header .logo-accent {
+  font-size: 1.5rem;
+}
+
+.hub-header .logo-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.hub-header .logo-sub {
+  color: var(--secondary);
+}
+
+.hub-header .hub-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(2, 195, 154, 0.15);
+  color: var(--secondary);
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(2, 195, 154, 0.2);
+  margin-left: 8px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+
+.hub-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* Hub Grid Cards */
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.hub-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(2, 195, 154, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(2, 195, 154, 0.08);
+}
+
+.hub-card.active {
+  background: rgba(2, 128, 144, 0.06);
+  border-color: var(--border-accent);
+  cursor: default;
+}
+
+.hub-card.active:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.hub-card-icon {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
+}
+
+.hub-card-content h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.hub-card-content p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.hub-card .badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 8px;
+  width: max-content;
+}
+
+.hub-card .active-badge {
+  background: rgba(2, 128, 144, 0.2);
+  color: #8ce1ec;
+  border: 1px solid rgba(2, 128, 144, 0.3);
+}
+
+.hub-card .badge-link {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.hub-card:hover .badge-link {
+  transform: translateX(3px);
+}
+
+/* Mobile Slide-Over Drawer styling */
+.mobile-hub-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(13, 27, 42, 0.98);
+  border-top: 1px solid var(--border-active);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  z-index: 100;
+  padding: 20px;
+  box-sizing: border-box;
+  transform: translateY(105%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(25px);
+  box-shadow: 0 -15px 40px rgba(0,0,0,0.6);
+}
+
+.mobile-hub-drawer.open {
+  transform: translateY(0);
+}
+
+.mobile-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 10px;
+}
+
+.mobile-hub-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+}
+
+.close-drawer-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.mobile-hub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.mobile-hub-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.mobile-hub-item:active {
+  background: rgba(255,255,255,0.06);
+}
+
+.mobile-hub-item.active {
+  background: rgba(2, 128, 144, 0.1);
+  border-color: rgba(2, 128, 144, 0.3);
+}
+
+.mobile-hub-icon {
+  font-size: 1.3rem;
+}
+
+.mobile-hub-info h4 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.mobile-hub-info p {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mobile-hub-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-hub-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Responsive Overrides */
+@media (max-width: 900px) {
+  .page-wrapper {
+    padding: 0;
+    max-width: 100%;
+    height: 100vh;
+  }
+  .demo-hub-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 901px) {
+  body {
+    overflow: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+    align-items: flex-start !important;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+

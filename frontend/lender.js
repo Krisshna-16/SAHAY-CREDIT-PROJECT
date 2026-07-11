@@ -370,47 +370,52 @@ async function init() {
   translateLenderUI();
 }
 
+// Helper: safe addEventListener (no-op if element is null)
+function safeOn(el, event, handler) {
+  if (el) el.addEventListener(event, handler);
+}
+
 // Bind event listeners
 function bindEvents() {
   // Search filter
-  dom.searchInput.addEventListener('input', (e) => {
+  safeOn(dom.searchInput, 'input', (e) => {
     state.searchQuery = e.target.value.toLowerCase();
     renderTable();
   });
 
   // Status dropdown filter
-  dom.statusFilter.addEventListener('change', (e) => {
+  safeOn(dom.statusFilter, 'change', (e) => {
     state.statusFilter = e.target.value;
     renderTable();
   });
 
   // Decision buttons inside detail drawer
-  dom.btnApprove.addEventListener('click', () => updateStatus('Approve'));
-  dom.btnReview.addEventListener('click', () => updateStatus('Review'));
-  dom.btnReject.addEventListener('click', () => updateStatus('Reject'));
+  safeOn(dom.btnApprove, 'click', () => updateStatus('Approve'));
+  safeOn(dom.btnReview, 'click', () => updateStatus('Review'));
+  safeOn(dom.btnReject, 'click', () => updateStatus('Reject'));
 
   // Export audit trail
-  dom.btnExportAudit.addEventListener('click', exportAuditTrail);
-  
+  safeOn(dom.btnExportAudit, 'click', exportAuditTrail);
+
   // Language button toggle
-  dom.langBtn.addEventListener('click', toggleLanguage);
+  safeOn(dom.langBtn, 'click', toggleLanguage);
 
   // Tab buttons
-  dom.tabApplications.addEventListener('click', () => switchTab('applications-workspace'));
-  dom.tabAudit.addEventListener('click', () => switchTab('audit-workspace'));
-  dom.tabApi.addEventListener('click', () => switchTab('api-workspace'));
-  dom.tabAnalytics.addEventListener('click', () => switchTab('analytics-workspace'));
-  dom.tabModel.addEventListener('click', () => switchTab('model-info-workspace'));
+  safeOn(dom.tabApplications, 'click', () => switchTab('applications-workspace'));
+  safeOn(dom.tabAudit, 'click', () => switchTab('audit-workspace'));
+  safeOn(dom.tabApi, 'click', () => switchTab('api-workspace'));
+  safeOn(dom.tabAnalytics, 'click', () => switchTab('analytics-workspace'));
+  safeOn(dom.tabModel, 'click', () => switchTab('model-info-workspace'));
 
   // Audit filter controls
-  dom.auditSearchInput.addEventListener('input', renderAuditLog);
-  dom.auditDecisionFilter.addEventListener('change', renderAuditLog);
-  dom.auditScoreMin.addEventListener('input', renderAuditLog);
-  dom.auditScoreMax.addEventListener('input', renderAuditLog);
-  dom.auditSignalMin.addEventListener('input', renderAuditLog);
+  safeOn(dom.auditSearchInput, 'input', renderAuditLog);
+  safeOn(dom.auditDecisionFilter, 'change', renderAuditLog);
+  safeOn(dom.auditScoreMin, 'input', renderAuditLog);
+  safeOn(dom.auditScoreMax, 'input', renderAuditLog);
+  safeOn(dom.auditSignalMin, 'input', renderAuditLog);
 
   // Export CSV Log
-  dom.btnExportAuditCSV.addEventListener('click', exportAuditLogCSV);
+  safeOn(dom.btnExportAuditCSV, 'click', exportAuditLogCSV);
 }
 
 // Toggle language
@@ -432,64 +437,69 @@ function toggleLanguage() {
   translateLenderUI();
 }
 
+// Helper: null-safe setText
+function setText(id, text) {
+  const el = typeof id === 'string' ? document.getElementById(id) : id;
+  if (el) el.textContent = text;
+}
+
 // Render dynamic UI translations on screen
 function translateLenderUI() {
   const t = LENDER_TRANSLATIONS[state.currentLanguage];
   
   // Translate static labels
-  document.getElementById('logo-portal-text').textContent = t.portalTitle;
-  document.getElementById('partner-badge-text').textContent = t.partnerBadge;
+  setText('logo-portal-text', t.portalTitle);
+  setText('partner-badge-text', t.partnerBadge);
   
-  document.getElementById('stat-total-title').textContent = t.statTotal;
-  document.getElementById('stat-avg-score-title').textContent = t.statAvgScore;
-  document.getElementById('stat-approved-title').textContent = t.statApprovalRate;
-  document.getElementById('stat-avg-loan-title').textContent = t.statAvgLoan;
+  setText('stat-total-title', t.statTotal);
+  setText('stat-avg-score-title', t.statAvgScore);
+  setText('stat-approved-title', t.statApprovalRate);
+  setText('stat-avg-loan-title', t.statAvgLoan);
   
-  document.getElementById('workspace-title').textContent = t.workspaceTitle;
-  dom.searchInput.placeholder = t.searchPlaceholder;
+  setText('workspace-title', t.workspaceTitle);
+  if (dom.searchInput) dom.searchInput.placeholder = t.searchPlaceholder;
   
-  document.getElementById('opt-all').textContent = t.filterAll;
-  document.getElementById('opt-approve').textContent = t.filterApproved;
-  document.getElementById('opt-review').textContent = t.filterReview;
-  document.getElementById('opt-reject').textContent = t.filterRejected;
+  setText('opt-all', t.filterAll);
+  setText('opt-approve', t.filterApproved);
+  setText('opt-review', t.filterReview);
+  setText('opt-reject', t.filterRejected);
   
-  document.getElementById('th-name').textContent = t.colName;
-  document.getElementById('th-score').textContent = t.colScore;
-  document.getElementById('th-confidence').textContent = t.colConfidence;
-  document.getElementById('th-loan').textContent = t.colLoan;
-  document.getElementById('th-rate').textContent = t.colRate;
-  document.getElementById('th-signals').textContent = t.colSignals;
-  document.getElementById('th-fraud').textContent = t.colFraud;
-  document.getElementById('th-status').textContent = t.colStatus;
+  setText('th-name', t.colName);
+  setText('th-score', t.colScore);
+  setText('th-confidence', t.colConfidence);
+  setText('th-loan', t.colLoan);
+  setText('th-rate', t.colRate);
+  setText('th-signals', t.colSignals);
+  setText('th-fraud', t.colFraud);
+  setText('th-status', t.colStatus);
   
-  document.getElementById('no-selection-title').textContent = t.noticeTitle;
-  document.getElementById('no-selection-desc').textContent = t.noticeDesc;
+  setText('no-selection-title', t.noticeTitle);
+  setText('no-selection-desc', t.noticeDesc);
   
-  dom.btnApprove.textContent = t.btnApprove;
-  dom.btnReview.textContent = t.btnReview;
-  dom.btnReject.textContent = t.btnReject;
+  if (dom.btnApprove) dom.btnApprove.textContent = t.btnApprove;
+  if (dom.btnReview) dom.btnReview.textContent = t.btnReview;
+  if (dom.btnReject) dom.btnReject.textContent = t.btnReject;
   
-  document.getElementById('score-label-title').textContent = t.scoreTitle;
-  document.getElementById('pricing-label-title').textContent = t.pricingTitle;
-  document.getElementById('apr-rec-label').textContent = t.aprRec;
+  setText('score-label-title', t.scoreTitle);
+  setText('pricing-label-title', t.pricingTitle);
+  setText('apr-rec-label', t.aprRec);
   
-  document.getElementById('shap-section-title').textContent = t.shapTitle;
-  document.getElementById('signals-section-title').textContent = t.signalsTitle;
-  document.getElementById('psych-section-title').textContent = t.psychTitle;
-  document.getElementById('risk-attitude-label').textContent = t.riskLevelLabel;
-  document.getElementById('audit-section-title').textContent = t.auditTitle;
+  setText('shap-section-title', t.shapTitle);
+  setText('signals-section-title', t.signalsTitle);
+  setText('psych-section-title', t.psychTitle);
+  setText('risk-attitude-label', t.riskLevelLabel);
+  setText('audit-section-title', t.auditTitle);
   
-  document.getElementById('export-btn-text').textContent = t.btnExport;
-  document.getElementById('export-notice-text').textContent = t.exportNotice;
+  setText('export-btn-text', t.btnExport);
+  setText('export-notice-text', t.exportNotice);
   
   // Translate tab buttons
-  document.getElementById('tab-applications-text').textContent = state.currentLanguage === 'en' ? 'Applications' : 'आवेदन';
-  document.getElementById('tab-audit-text').textContent = state.currentLanguage === 'en' ? 'Regulatory Audit Panel' : 'नियामक ऑडिट पैनल';
-  document.getElementById('tab-api-text').textContent = state.currentLanguage === 'en' ? 'API Documentation' : 'एपीआई दस्तावेज़';
-  document.getElementById('tab-analytics-text').textContent = state.currentLanguage === 'en' ? 'Live Analytics' : 'लाइव एनालिटिक्स';
-  if (document.getElementById('tab-model-text')) {
-    document.getElementById('tab-model-text').textContent = t.tabModelText;
-  }
+  setText('tab-applications-text', state.currentLanguage === 'en' ? 'Applications' : 'आवेदन');
+  setText('tab-audit-text', state.currentLanguage === 'en' ? 'Regulatory Audit Panel' : 'नियामक ऑडिट पैनल');
+  setText('tab-api-text', state.currentLanguage === 'en' ? 'API Documentation' : 'एपीआई दस्तावेज़');
+  setText('tab-analytics-text', state.currentLanguage === 'en' ? 'Live Analytics' : 'लाइव एनालिटिक्स');
+  setText('tab-model-text', t.tabModelText);
+
 
   // Translate compliance summary & audit toolbar elements
   if (document.getElementById('lbl-total-decisions')) {
@@ -673,14 +683,26 @@ function renderTable() {
       <td><span class="${statusClass}">${statusText}</span></td>
     `;
 
-    // Click on fraud badge
+    // Click on fraud badge — show detailed flags with dataSource badges
     const badge = tr.querySelector('.fraud-badge');
     badge.addEventListener('click', (e) => {
       e.stopPropagation(); // prevent selecting the row when clicking the badge
       
       const title = state.currentLanguage === 'hi' ? 'धोखाधड़ी जोखिम संकेतक' : 'Fraud Risk Indicators';
-      if (app.fraudFlags && app.fraudFlags.length > 0) {
-        const flagsList = app.fraudFlags.map(f => `• ${f}`).join('\n');
+      // Use fraudAnalysis.flags (object array with dataSource) if available, fall back to fraudFlags (string array)
+      const flagObjs = (app.fraudAnalysis && app.fraudAnalysis.flags) || [];
+      const flagStrs = app.fraudFlags || [];
+      
+      if (flagObjs.length > 0) {
+        const flagsList = flagObjs.map(f => {
+          const badge = f.dataSource === 'real' ? '🟢 Real' : '🟡 Simulated';
+          return `• [${badge}] ${f.description}`;
+        }).join('\n');
+        const summary = app.fraudAnalysis.dataSourceSummary || {};
+        const summaryLine = `\n\n📊 ${summary.realFlags || 0} real / ${summary.simulatedFlags || 0} simulated flags`;
+        alert(`${title} (${app.name}):\n\n${flagsList}${summaryLine}`);
+      } else if (flagStrs.length > 0) {
+        const flagsList = flagStrs.map(f => `• [🟡 Simulated] ${f}`).join('\n');
         alert(`${title} (${app.name}):\n\n${flagsList}`);
       } else {
         const noFlagsMsg = state.currentLanguage === 'hi' 

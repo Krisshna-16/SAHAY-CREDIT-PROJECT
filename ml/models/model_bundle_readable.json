@@ -1,0 +1,586 @@
+{
+  "version": "v2_20260711",
+  "created_at": "2026-07-11T16:45:15.973005",
+  "algorithm": "XGBClassifier",
+  "objective": "binary:logistic",
+  "base_score": 0.39910328,
+  "n_trees": 450,
+  "n_features": 31,
+  "feature_names": [
+    "age_years",
+    "monthly_income",
+    "income_stability",
+    "salary_consistency",
+    "spending_ratio",
+    "savings_ratio",
+    "credit_income_ratio",
+    "goods_price_ratio",
+    "cash_flow_stability",
+    "ext_source_1",
+    "ext_source_2",
+    "ext_source_3",
+    "family_size",
+    "has_children",
+    "documents_provided",
+    "region_population_relative",
+    "region_rating",
+    "days_last_phone_change",
+    "enquiries_hour",
+    "enquiries_day",
+    "enquiries_week",
+    "enquiries_mon",
+    "enquiries_qrt",
+    "enquiries_year",
+    "occupation_type",
+    "income_type",
+    "organization_type",
+    "education_type",
+    "family_status",
+    "housing_type",
+    "contract_type"
+  ],
+  "display_names": {
+    "age_years": {
+      "en": "Age",
+      "hi": "\u0906\u092f\u0941"
+    },
+    "monthly_income": {
+      "en": "Monthly Income",
+      "hi": "\u092e\u093e\u0938\u093f\u0915 \u0906\u092f"
+    },
+    "income_stability": {
+      "en": "Income Stability",
+      "hi": "\u0906\u092f \u0938\u094d\u0925\u093f\u0930\u0924\u093e"
+    },
+    "salary_consistency": {
+      "en": "Salary Consistency",
+      "hi": "\u0935\u0947\u0924\u0928 \u0928\u093f\u092f\u092e\u093f\u0924\u0924\u093e"
+    },
+    "spending_ratio": {
+      "en": "Spending Ratio",
+      "hi": "\u0916\u0930\u094d\u091a \u0905\u0928\u0941\u092a\u093e\u0924"
+    },
+    "savings_ratio": {
+      "en": "Savings Ratio",
+      "hi": "\u092c\u091a\u0924 \u0905\u0928\u0941\u092a\u093e\u0924"
+    },
+    "credit_income_ratio": {
+      "en": "Credit-to-Income Ratio",
+      "hi": "\u090b\u0923-\u0906\u092f \u0905\u0928\u0941\u092a\u093e\u0924"
+    },
+    "goods_price_ratio": {
+      "en": "Goods Price Ratio",
+      "hi": "\u0935\u0938\u094d\u0924\u0941 \u092e\u0942\u0932\u094d\u092f \u0905\u0928\u0941\u092a\u093e\u0924"
+    },
+    "cash_flow_stability": {
+      "en": "Cash Flow Stability",
+      "hi": "\u0928\u0915\u0926\u0940 \u092a\u094d\u0930\u0935\u093e\u0939 \u0938\u094d\u0925\u093f\u0930\u0924\u093e"
+    },
+    "ext_source_1": {
+      "en": "External Score 1",
+      "hi": "\u092c\u093e\u0939\u0930\u0940 \u0938\u094d\u0915\u094b\u0930 1"
+    },
+    "ext_source_2": {
+      "en": "External Score 2",
+      "hi": "\u092c\u093e\u0939\u0930\u0940 \u0938\u094d\u0915\u094b\u0930 2"
+    },
+    "ext_source_3": {
+      "en": "External Score 3",
+      "hi": "\u092c\u093e\u0939\u0930\u0940 \u0938\u094d\u0915\u094b\u0930 3"
+    },
+    "family_size": {
+      "en": "Family Size",
+      "hi": "\u092a\u0930\u093f\u0935\u093e\u0930 \u0915\u093e \u0906\u0915\u093e\u0930"
+    },
+    "has_children": {
+      "en": "Has Children",
+      "hi": "\u092c\u091a\u094d\u091a\u0947 \u0939\u0948\u0902"
+    },
+    "documents_provided": {
+      "en": "Documents Provided",
+      "hi": "\u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u093f\u090f \u0917\u090f \u0926\u0938\u094d\u0924\u093e\u0935\u0947\u091c\u093c"
+    },
+    "region_population_relative": {
+      "en": "Region Population",
+      "hi": "\u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u091c\u0928\u0938\u0902\u0916\u094d\u092f\u093e"
+    },
+    "region_rating": {
+      "en": "Region Rating",
+      "hi": "\u0915\u094d\u0937\u0947\u0924\u094d\u0930 \u0930\u0947\u091f\u093f\u0902\u0917"
+    },
+    "days_last_phone_change": {
+      "en": "Phone Stability",
+      "hi": "\u092b\u093c\u094b\u0928 \u0938\u094d\u0925\u093f\u0930\u0924\u093e"
+    },
+    "enquiries_hour": {
+      "en": "Credit Enquiries (hour)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (hour)"
+    },
+    "enquiries_day": {
+      "en": "Credit Enquiries (day)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (day)"
+    },
+    "enquiries_week": {
+      "en": "Credit Enquiries (week)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (week)"
+    },
+    "enquiries_mon": {
+      "en": "Credit Enquiries (mon)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (mon)"
+    },
+    "enquiries_qrt": {
+      "en": "Credit Enquiries (qrt)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (qrt)"
+    },
+    "enquiries_year": {
+      "en": "Credit Enquiries (year)",
+      "hi": "\u0915\u094d\u0930\u0947\u0921\u093f\u091f \u092a\u0942\u091b\u0924\u093e\u091b (year)"
+    },
+    "occupation_type": {
+      "en": "Occupation",
+      "hi": "\u0935\u094d\u092f\u0935\u0938\u093e\u092f"
+    },
+    "income_type": {
+      "en": "Employment Type",
+      "hi": "\u0930\u094b\u091c\u0917\u093e\u0930 \u092a\u094d\u0930\u0915\u093e\u0930"
+    },
+    "organization_type": {
+      "en": "Organization Type",
+      "hi": "\u0938\u0902\u0917\u0920\u0928 \u092a\u094d\u0930\u0915\u093e\u0930"
+    },
+    "education_type": {
+      "en": "Education Level",
+      "hi": "\u0936\u093f\u0915\u094d\u0937\u093e \u0938\u094d\u0924\u0930"
+    },
+    "family_status": {
+      "en": "Family Status",
+      "hi": "\u092a\u093e\u0930\u093f\u0935\u093e\u0930\u093f\u0915 \u0938\u094d\u0925\u093f\u0924\u093f"
+    },
+    "housing_type": {
+      "en": "Housing Type",
+      "hi": "\u0906\u0935\u093e\u0938 \u092a\u094d\u0930\u0915\u093e\u0930"
+    },
+    "contract_type": {
+      "en": "Contract Type",
+      "hi": "\u0905\u0928\u0941\u092c\u0902\u0927 \u092a\u094d\u0930\u0915\u093e\u0930"
+    }
+  },
+  "calibration_map": [
+    [
+      0.059487,
+      300
+    ],
+    [
+      0.183058,
+      306
+    ],
+    [
+      0.223276,
+      312
+    ],
+    [
+      0.253856,
+      318
+    ],
+    [
+      0.278268,
+      324
+    ],
+    [
+      0.300573,
+      330
+    ],
+    [
+      0.319969,
+      336
+    ],
+    [
+      0.338032,
+      342
+    ],
+    [
+      0.353927,
+      348
+    ],
+    [
+      0.368929,
+      354
+    ],
+    [
+      0.383335,
+      360
+    ],
+    [
+      0.396973,
+      366
+    ],
+    [
+      0.408703,
+      372
+    ],
+    [
+      0.421424,
+      378
+    ],
+    [
+      0.433158,
+      384
+    ],
+    [
+      0.444474,
+      390
+    ],
+    [
+      0.455354,
+      396
+    ],
+    [
+      0.465516,
+      402
+    ],
+    [
+      0.475484,
+      408
+    ],
+    [
+      0.485499,
+      414
+    ],
+    [
+      0.495178,
+      420
+    ],
+    [
+      0.504829,
+      426
+    ],
+    [
+      0.514546,
+      432
+    ],
+    [
+      0.524356,
+      438
+    ],
+    [
+      0.532816,
+      444
+    ],
+    [
+      0.541075,
+      450
+    ],
+    [
+      0.548818,
+      456
+    ],
+    [
+      0.556236,
+      462
+    ],
+    [
+      0.563975,
+      468
+    ],
+    [
+      0.571634,
+      474
+    ],
+    [
+      0.579122,
+      480
+    ],
+    [
+      0.586406,
+      486
+    ],
+    [
+      0.593553,
+      492
+    ],
+    [
+      0.600392,
+      498
+    ],
+    [
+      0.606839,
+      504
+    ],
+    [
+      0.613647,
+      510
+    ],
+    [
+      0.619822,
+      516
+    ],
+    [
+      0.626063,
+      522
+    ],
+    [
+      0.632103,
+      528
+    ],
+    [
+      0.63895,
+      534
+    ],
+    [
+      0.645303,
+      540
+    ],
+    [
+      0.651555,
+      546
+    ],
+    [
+      0.657518,
+      552
+    ],
+    [
+      0.663262,
+      558
+    ],
+    [
+      0.66875,
+      564
+    ],
+    [
+      0.674695,
+      570
+    ],
+    [
+      0.680568,
+      576
+    ],
+    [
+      0.686096,
+      582
+    ],
+    [
+      0.691885,
+      588
+    ],
+    [
+      0.697468,
+      594
+    ],
+    [
+      0.702827,
+      600
+    ],
+    [
+      0.707826,
+      606
+    ],
+    [
+      0.712485,
+      612
+    ],
+    [
+      0.71748,
+      618
+    ],
+    [
+      0.722827,
+      624
+    ],
+    [
+      0.727584,
+      630
+    ],
+    [
+      0.732527,
+      636
+    ],
+    [
+      0.737411,
+      642
+    ],
+    [
+      0.742434,
+      648
+    ],
+    [
+      0.747343,
+      654
+    ],
+    [
+      0.752205,
+      660
+    ],
+    [
+      0.757014,
+      666
+    ],
+    [
+      0.761449,
+      672
+    ],
+    [
+      0.76564,
+      678
+    ],
+    [
+      0.770233,
+      684
+    ],
+    [
+      0.774609,
+      690
+    ],
+    [
+      0.779323,
+      696
+    ],
+    [
+      0.783685,
+      702
+    ],
+    [
+      0.788068,
+      708
+    ],
+    [
+      0.792379,
+      714
+    ],
+    [
+      0.797058,
+      720
+    ],
+    [
+      0.801338,
+      726
+    ],
+    [
+      0.80599,
+      732
+    ],
+    [
+      0.810315,
+      738
+    ],
+    [
+      0.814638,
+      744
+    ],
+    [
+      0.819235,
+      750
+    ],
+    [
+      0.82338,
+      756
+    ],
+    [
+      0.827876,
+      762
+    ],
+    [
+      0.832384,
+      768
+    ],
+    [
+      0.836817,
+      774
+    ],
+    [
+      0.841333,
+      780
+    ],
+    [
+      0.845699,
+      786
+    ],
+    [
+      0.849916,
+      792
+    ],
+    [
+      0.854189,
+      798
+    ],
+    [
+      0.859302,
+      804
+    ],
+    [
+      0.863509,
+      810
+    ],
+    [
+      0.867908,
+      816
+    ],
+    [
+      0.872741,
+      822
+    ],
+    [
+      0.87738,
+      828
+    ],
+    [
+      0.882248,
+      834
+    ],
+    [
+      0.887552,
+      840
+    ],
+    [
+      0.892835,
+      846
+    ],
+    [
+      0.898488,
+      852
+    ],
+    [
+      0.904148,
+      858
+    ],
+    [
+      0.910298,
+      864
+    ],
+    [
+      0.916481,
+      870
+    ],
+    [
+      0.92374,
+      876
+    ],
+    [
+      0.931907,
+      882
+    ],
+    [
+      0.941202,
+      888
+    ],
+    [
+      0.953068,
+      894
+    ],
+    [
+      0.989158,
+      900
+    ]
+  ],
+  "hyperparameters": {
+    "n_estimators": 1000,
+    "max_depth": 3,
+    "learning_rate": 0.08813598475052263,
+    "min_child_weight": 7,
+    "subsample": 0.6945628013258798,
+    "colsample_bytree": 0.6999882177768999,
+    "reg_alpha": 6.92274582630245,
+    "reg_lambda": 0.000378795185914426,
+    "scale_pos_weight": 7.519112620838951
+  },
+  "trees": "[450 trees omitted for readability]"
+}

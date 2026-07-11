@@ -19,8 +19,80 @@
   <div class="bg-glow bg-glow-1"></div>
   <div class="bg-glow bg-glow-2"></div>
 
-  <!-- Main Mobile Device Frame Mockup for Desktop -->
-  <div class="device-frame">
+  <!-- Unified Page Wrapper for Side-by-Side Desktop layout -->
+  <div class="page-wrapper">
+
+    <!-- Desktop Left Sidebar: Demo Hub Dashboard -->
+    <aside class="demo-hub-desktop" id="demo-hub-desktop">
+      <div class="hub-header">
+        <div class="logo-area">
+          <span class="logo-accent" style="font-size: 1.5rem;">⚡</span>
+          <span class="logo-text" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">Sahay<span class="logo-sub" style="color: var(--secondary);">Credit</span> <span class="hub-tag" style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(2, 195, 154, 0.15); color: var(--secondary); padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(2, 195, 154, 0.2); margin-left: 6px; letter-spacing: 0.5px; vertical-align: middle;">Demo Suite</span></span>
+        </div>
+        <p class="hub-subtitle" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-top: 8px;">
+          Access the complete alternative credit scoring system, partner portals, and model explainers from this control panel.
+        </p>
+      </div>
+
+      <div class="hub-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="hub-card active" style="background: rgba(2, 128, 144, 0.08); border: 1px solid var(--border-accent); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">📱</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Borrower Portal</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Self-assessment flow for thin-file borrowers with behavior check.</p>
+            <span class="badge active-badge" style="font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 8px; background: rgba(2, 128, 144, 0.2); color: #8ce1ec; border: 1px solid rgba(2, 128, 144, 0.3); width: max-content; display: inline-block;">Active in Simulator</span>
+          </div>
+        </div>
+
+        <a href="lender.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">🏦</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Lender Portal</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Applications pool, decision metrics, SHAP, and consent audit trail.</p>
+            <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Go to Portal →</span>
+          </div>
+        </a>
+
+        <a href="demo.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">⚙️</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Persona Simulator</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Pre-configure alt-data footprints (UPI, Yelp) and trigger fraud cases.</p>
+            <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Launch Simulator →</span>
+          </div>
+        </a>
+
+        <a href="map.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">🗺️</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Geospatial Map</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Interactive GIS dashboard of regional credit gaps and risk clusters.</p>
+            <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Open Map →</span>
+          </div>
+        </a>
+
+        <a href="ml_pipeline.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">🧠</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">ML Pipeline</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Actual Optuna tuning charts, training logs, and SHAP overview.</p>
+            <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">View Pipeline →</span>
+          </div>
+        </a>
+
+        <a href="pitch.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
+          <div class="hub-card-icon" style="font-size: 1.3rem;">📊</div>
+          <div class="hub-card-content">
+            <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Pitch Slides</h4>
+            <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Problem statement slide deck, architecture, and roadmaps.</p>
+            <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Open Deck →</span>
+          </div>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Mobile Device Frame Mockup for Desktop -->
+    <div class="device-frame">
     <div class="device-screen">
       
       <!-- Top Action Bar (Persistent Language Toggle & Logo Icon) -->
@@ -29,8 +101,9 @@
           <span class="logo-accent">⚡</span>
           <span class="logo-text">Sahay<span class="logo-sub">Credit</span></span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <a href="pitch.html" style="font-size: 0.72rem; color: var(--secondary); text-decoration: none; border: 1px solid var(--secondary); border-radius: 4px; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; transition: all 0.2s ease;">PITCH</a>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="demo-hub-toggle-btn" style="font-size: 0.68rem; color: var(--secondary); background: rgba(2, 195, 154, 0.1); border: 1px solid var(--secondary); border-radius: 4px; padding: 2px 6px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">⚡ HUB</button>
+          <a href="pitch.html" style="font-size: 0.68rem; color: var(--secondary); text-decoration: none; border: 1px solid var(--secondary); border-radius: 4px; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; transition: all 0.2s ease;">PITCH</a>
           <button id="lang-toggle-btn" class="lang-toggle" aria-label="Toggle language">
             <span class="lang-text active" data-lang="en">EN</span>
             <span class="lang-divider">|</span>
@@ -495,6 +568,11 @@
             </div>
             
             <div id="confidence-bounds-label" class="confidence-bounds-text">Confidence Interval: 705 - 735</div>
+
+            <!-- Data Sources Indicator -->
+            <div id="data-sources-indicator" style="display: none; text-align: center; margin-top: 6px; font-size: 0.7rem; color: var(--secondary); font-weight: 600; letter-spacing: 0.02em; padding: 4px 12px; background: rgba(108,99,255,0.06); border-radius: 16px; display: inline-block;">
+              <span id="data-sources-indicator-text">Score based on 1 of 3 available data sources</span>
+            </div>
             
             <div class="profile-tier-badge">
               <span id="profile-tier-title">Tier:</span> <strong id="profile-tier-value">A</strong>
@@ -590,6 +668,24 @@
               <div class="dim-track">
                 <div id="dim-ri-bar" class="dim-fill fill-ri" style="width: 80%;"></div>
               </div>
+            </div>
+          </div>
+
+          <!-- Composite Score Breakdown (consented sources) -->
+          <div class="composite-breakdown-card card-glow" id="composite-breakdown-container" style="display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+            <h4 class="breakdown-title" id="composite-breakdown-headline" style="margin-top: 0; margin-bottom: 12px;">Composite Score Weights</h4>
+            <div id="composite-breakdown-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Dynamically populated -->
+            </div>
+            <div id="composite-explanation-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;"></div>
+          </div>
+
+          <!-- Manage Data Permissions Panel -->
+          <div id="manage-permissions-panel" style="display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+            <h4 id="permissions-headline" class="breakdown-title" style="margin-top: 0; margin-bottom: 10px; font-size: 0.82rem;">Manage Data Permissions</h4>
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0 0 12px 0;">You can revoke any data source at any time. Revoking removes that source from future score calculations.</p>
+            <div id="permissions-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamically populated -->
             </div>
           </div>
 
@@ -1194,8 +1290,62 @@
         </section>
 
       </main>
+      <!-- Mobile Demo Hub Slide-Over Drawer -->
+      <div id="mobile-demo-hub-drawer" class="mobile-hub-drawer" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(13, 27, 42, 0.98); border-top: 1px solid var(--border-active); border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 100; padding: 20px; box-sizing: border-box; transform: translateY(105%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); backdrop-filter: blur(25px); box-shadow: 0 -15px 40px rgba(0,0,0,0.6);">
+        <div class="mobile-hub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
+          <span class="mobile-hub-title" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.2px;">⚡ Demo Hub</span>
+          <button id="close-hub-drawer-btn" class="close-drawer-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px;">&times;</button>
+        </div>
+        <div class="mobile-hub-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto;">
+          <div class="mobile-hub-item active" id="btn-mobile-onboarding" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(2, 128, 144, 0.1); border: 1px solid rgba(2, 128, 144, 0.3); border-radius: 12px; cursor: pointer;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">📱</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Borrower Onboarding</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Self-assessment flow (Active)</p>
+            </div>
+          </div>
+          <a href="lender.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🏦</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Lender Portal</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Incoming pool & audit log</p>
+            </div>
+          </a>
+          <a href="demo.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">⚙️</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Kirana Simulator</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Configure persona & test cases</p>
+            </div>
+          </a>
+          <a href="map.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🗺️</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Geo-Risk Map</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">GIS regional credit gaps</p>
+            </div>
+          </a>
+          <a href="ml_pipeline.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🧠</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">ML Pipeline</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Optuna tuning & metrics</p>
+            </div>
+          </a>
+          <a href="pitch.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
+            <span class="mobile-hub-icon" style="font-size: 1.3rem;">📊</span>
+            <div class="mobile-hub-info">
+              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Pitch Deck</h4>
+              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Slides & architecture overview</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div id="mobile-hub-overlay" class="mobile-hub-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;"></div>
     </div>
   </div>
+
+  </div> <!-- Close page-wrapper -->
 
   <!-- Custom logic -->
   <script src="app.js"></script>

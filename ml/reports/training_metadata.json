@@ -1,0 +1,23 @@
+{
+  "training_mode": "full_optuna",
+  "optuna_trials": 50,
+  "early_stopping_enabled": true,
+  "training_time_seconds": 7.7,
+  "optuna_time_seconds": 1536,
+  "total_pipeline_time_seconds": 1543.7,
+  "best_params": {
+    "n_estimators": 1000,
+    "max_depth": 3,
+    "learning_rate": 0.08813598475052263,
+    "min_child_weight": 7,
+    "subsample": 0.6945628013258798,
+    "colsample_bytree": 0.6999882177768999,
+    "reg_alpha": 6.92274582630245,
+    "reg_lambda": 0.000378795185914426,
+    "scale_pos_weight": 7.519112620838951
+  },
+  "best_iteration": 399,
+  "best_validation_score": 0.7565108688081232,
+  "optuna_best_cv_auc": 0.750362,
+  "previous_quickmode_auc": 0.754775
+}
