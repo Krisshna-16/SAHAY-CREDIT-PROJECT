@@ -199,51 +199,85 @@ function predict(features) {
 }
 
 
+// ── PDO Calibration Parameters ──────────────────────────────────────────────
+// Loaded from ml/data/processed/pdo_calibration_params.json, produced by
+// ml/calibrate_pdo.py. These are FIXED parameters — not fitted to any target
+// score output. See ml/reports/pdo_calibration_report.md for full documentation.
+
+let PDO_PARAMS = null;
+
+function loadPdoCalibration() {
+  const pdoPath = path.join(__dirname, '../ml/data/processed/pdo_calibration_params.json');
+  if (fs.existsSync(pdoPath)) {
+    try {
+      PDO_PARAMS = JSON.parse(fs.readFileSync(pdoPath, 'utf-8'));
+      console.log('[SahayCredit] PDO calibration loaded:');
+      console.log(`[SahayCredit]   Method: ${PDO_PARAMS.method}`);
+      console.log(`[SahayCredit]   Platt A=${PDO_PARAMS.platt.A.toFixed(4)}, B=${PDO_PARAMS.platt.B.toFixed(4)}`);
+      console.log(`[SahayCredit]   PDO: Anchor=${PDO_PARAMS.pdo.anchor_score}, Odds=${PDO_PARAMS.pdo.anchor_odds}:1, PDO=${PDO_PARAMS.pdo.pdo}`);
+      console.log(`[SahayCredit]   ECE after calibration: ${PDO_PARAMS.calibration_metrics.ece_after_platt}`);
+      return true;
+    } catch (err) {
+      console.warn('[SahayCredit] Failed to load PDO calibration:', err.message);
+    }
+  }
+  console.warn('[SahayCredit] PDO calibration not found, using linear fallback.');
+  return false;
+}
+
+
 // ── Score Calibration ───────────────────────────────────────────────────────
 
 /**
- * Convert P(repayment) to a 300-900 credit score using the calibrated
- * percentile mapping built during model export.
+ * Convert the model's raw P(default) to a credit score using:
+ * 1. Platt scaling to correct for scale_pos_weight miscalibration
+ * 2. PDO (Points to Double Odds) score conversion
  *
- * Uses binary search on the sorted calibration map.
- * The mapping is monotonic: higher P(repayment) → higher score.
+ * METHODOLOGY (industry-standard, citable):
+ * ──────────────────────────────────────────
+ * Step 1 — Platt scaling:
+ *   The XGBoost model was trained with scale_pos_weight = 7.52 to handle
+ *   class imbalance, which makes predict_proba output a skewed, non-calibrated
+ *   probability. Platt scaling (logistic regression of true labels against
+ *   raw log-odds, fit on 46,127-sample validation set) corrects this:
+ *     calibrated_logit = A * raw_log_odds + B
+ *     P(default)_calibrated = sigmoid(calibrated_logit)
+ *   ECE improves from 0.2532 to 0.0015 after this step.
  *
- * @param {number} pRepayment - Probability of repayment (0-1)
+ * Step 2 — PDO conversion (FICO-style scorecard):
+ *   odds = pRepayment / pDefault
+ *   Score = Offset + Factor * ln(odds)
+ *   Factor = PDO / ln(2)
+ *   Offset = Anchor_Score - Factor * ln(Anchor_Odds)
+ *
+ * Anchor parameters (business risk-appetite decisions, NOT fitted to outputs):
+ *   Anchor_Score = 600 — industry convention
+ *   Anchor_Odds = 3:1 — at score 600, accept ~25% default rate
+ *     (justified: financial inclusion product for thin-file borrowers)
+ *   PDO = 50 — every 50 points doubles odds; standard convention
+ *
+ * @param {number} pRepayment - Raw P(repayment) from model (= 1 - raw P(default))
  * @returns {number} Credit score (300-900)
  */
 function calibrateScore(pRepayment) {
-  if (!MODEL_BUNDLE || !MODEL_BUNDLE.calibration_map) {
-    // Linear fallback
+  if (!PDO_PARAMS) {
+    // Linear fallback if PDO calibration not loaded
     return Math.round(300 + 600 * Math.max(0, Math.min(1, pRepayment)));
   }
-  
-  const map = MODEL_BUNDLE.calibration_map;
-  
-  // Binary search for the right interval
-  let lo = 0, hi = map.length - 1;
-  
-  if (pRepayment <= map[0][0]) return map[0][1];
-  if (pRepayment >= map[hi][0]) return map[hi][1];
-  
-  while (lo < hi - 1) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (map[mid][0] <= pRepayment) {
-      lo = mid;
-    } else {
-      hi = mid;
-    }
-  }
-  
-  // Linear interpolation between lo and hi
-  const [pLo, sLo] = map[lo];
-  const [pHi, sHi] = map[hi];
-  
-  if (pHi === pLo) return sLo;
-  
-  const frac = (pRepayment - pLo) / (pHi - pLo);
-  const score = Math.round(sLo + frac * (sHi - sLo));
-  
-  return Math.max(300, Math.min(900, score));
+
+  // Step 1: Platt scaling — correct for scale_pos_weight miscalibration
+  const rawPDefault = 1 - Math.max(0.0001, Math.min(0.9999, pRepayment));
+  const rawLogOdds = Math.log(rawPDefault / (1 - rawPDefault + 1e-15));
+  const calibratedLogit = PDO_PARAMS.platt.A * rawLogOdds + PDO_PARAMS.platt.B;
+  const calibratedPDefault = 1 / (1 + Math.exp(-calibratedLogit));
+  const calibratedPRepayment = 1 - calibratedPDefault;
+
+  // Step 2: PDO score conversion
+  const odds = calibratedPRepayment / (calibratedPDefault + 1e-15);
+  const score = PDO_PARAMS.pdo.offset + PDO_PARAMS.pdo.factor * Math.log(odds + 1e-15);
+
+  // Clip to 300-900 range only at absolute bounds
+  return Math.round(Math.max(300, Math.min(900, score)));
 }
 
 
@@ -525,12 +559,14 @@ function calculateScore(answers) {
     baseScore = calibrateScore(prediction.pRepayment);
     contributions = prediction.contributions;
     
-    // Step 3: Apply psychometric modifier
-    // For thin-file borrowers, psychometric signals are the primary differentiator.
-    // The XGBoost median profile produces ~531; this modifier lets good quiz
-    // answers push into the 650-780 range while poor answers stay below 600.
-    // Composite ranges from ~0.15 to ~0.95; modifier ranges from ~-88 to +245
-    const psychModifier = Math.round((psych.composite - 0.25) * 350);
+    // Step 3: Apply psychometric modifier (CAPPED — low-weight by design)
+    // The psychometric quiz is a supplementary signal, NOT the primary driver.
+    // It nudges the score within a tier (±25 pts max) but can never
+    // single-handedly cross the 600-point eligibility threshold.
+    // Composite ranges from ~0.4 to ~0.8; modifier ranges from -25 to +25
+    const PSYCH_CAP = 25; // Max ±25 points
+    const rawModifier = (psych.composite - 0.5) * 80; // Scale to ~±30 raw
+    const psychModifier = Math.round(Math.max(-PSYCH_CAP, Math.min(PSYCH_CAP, rawModifier)));
     baseScore = Math.max(300, Math.min(900, baseScore + psychModifier));
     
     // Format SHAP factors
@@ -779,6 +815,7 @@ function mapApplicationToFeatures(app) {
 
 module.exports = {
   loadModel,
+  loadPdoCalibration,
   calculateScore,
   scoreApplication,
   predict,

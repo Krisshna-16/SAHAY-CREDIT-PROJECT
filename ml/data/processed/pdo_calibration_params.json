@@ -1,0 +1,34 @@
+{
+  "method": "platt_scaling_then_pdo",
+  "platt": {
+    "A": 1.0152148008346558,
+    "B": -1.9930022954940796,
+    "description": "Platt scaling: calibrated_logit = A * raw_log_odds + B; P(default) = sigmoid(calibrated_logit)"
+  },
+  "pdo": {
+    "anchor_score": 600,
+    "anchor_odds": 3.0,
+    "pdo": 50,
+    "factor": 72.13475204444818,
+    "offset": 520.7518749639422,
+    "description": "Score = Offset + Factor * ln(pRepayment / pDefault). Factor = PDO/ln(2). Offset = AnchorScore - Factor*ln(AnchorOdds)."
+  },
+  "score_range": {
+    "min": 300,
+    "max": 900
+  },
+  "psychometric_modifier_cap": 25,
+  "calibration_metrics": {
+    "ece_before_platt": 0.253231,
+    "ece_after_platt": 0.00148,
+    "validation_set_size": 46127,
+    "default_rate": 0.080734
+  },
+  "score_distribution": {
+    "mean": 724.7,
+    "median": 727.2,
+    "std": 71.6,
+    "pct_eligible_gte600": 95.4
+  },
+  "generated_at": "2026-07-12T14:13:20.473139"
+}

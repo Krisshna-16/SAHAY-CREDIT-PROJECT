@@ -1,17 +1,36 @@
 const express = require('express');
 const path = require('path');
-const { loadModel, calculateScore, scoreApplication } = require('./scoring');
+const { loadModel, loadPdoCalibration, calculateScore, scoreApplication } = require('./scoring');
 const { analyzeFraud } = require('./fraud');
 const { grantConsent, revokeConsent, getConsentSummary, getAuditLog } = require('./consent');
 const { computeCompositeScore } = require('./compositeScoring');
 const { loadCalibration: loadEcomCal, computeEcommerceScore } = require('./datasources/ecommerce');
 const { loadCalibration: loadMerchantCal, computeMerchantScore } = require('./datasources/merchant');
 
+// Phase 3 modules
+const { processEkyc, getEkycStatus, isEkycVerified, getEkycAuditLog } = require('./ekyc');
+const { performBureauCheck, getBureauAuditLog } = require('./bureauCheck');
+const { sendOtp, verifyOtp, getOtpAuditLog } = require('./otp');
+const { login, refreshAccessToken, authMiddleware, requireRole, rateLimit, sanitizeInput, httpsRedirect } = require('./auth');
+const { encrypt, decrypt } = require('./encryption');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable JSON body parsing
-app.use(express.json());
+// ── Security Middleware ─────────────────────────────────────────────────────
+app.use(express.json({ limit: '1mb' }));
+app.use(sanitizeInput);
+app.use(httpsRedirect);
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
@@ -23,6 +42,9 @@ if (modelLoaded) {
 } else {
   console.log('[SahayCredit] ML model not available — using fallback scoring.');
 }
+
+// Load PDO calibration (Platt scaling + PDO parameters)
+loadPdoCalibration();
 
 // Load alt-data calibrations at startup
 loadEcomCal();
@@ -509,15 +531,169 @@ app.post('/api/log', (req, res) => {
   res.json({ success: true });
 });
 
+
+// ── Phase 3: Authentication Endpoints ───────────────────────────────────────
+
+const authRateLimit = rateLimit(10, 60 * 1000); // 10 requests per minute
+
+app.post('/api/auth/login', authRateLimit, (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ success: false, error: 'Email and password required' });
+  }
+  const result = login(email, password);
+  if (!result.success) {
+    return res.status(401).json(result);
+  }
+  res.json(result);
+});
+
+app.post('/api/auth/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    return res.status(400).json({ success: false, error: 'Refresh token required' });
+  }
+  const result = refreshAccessToken(refreshToken);
+  if (!result.success) {
+    return res.status(401).json(result);
+  }
+  res.json(result);
+});
+
+
+// ── Phase 3: eKYC Endpoints (Sandbox Mode) ──────────────────────────────────
+
+app.post('/api/ekyc/verify', rateLimit(5, 60 * 1000), (req, res) => {
+  try {
+    const { borrowerId, documentType, documentNumber, name, dob, selfieBase64 } = req.body;
+
+    if (!borrowerId || !documentType || !documentNumber || !name) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: borrowerId, documentType, documentNumber, name'
+      });
+    }
+
+    const result = processEkyc(borrowerId, {
+      type: documentType,
+      number: documentNumber,
+      name,
+      dob,
+      selfieBase64
+    });
+
+    res.json({
+      success: true,
+      data: result,
+      notice: 'eKYC (Sandbox Mode) - Architecture ready for DigiLocker/UIDAI integration'
+    });
+  } catch (error) {
+    console.error('[eKYC] Verification error:', error);
+    res.status(500).json({ success: false, error: 'eKYC verification failed' });
+  }
+});
+
+app.get('/api/ekyc/status/:borrowerId', (req, res) => {
+  const status = getEkycStatus(req.params.borrowerId);
+  res.json({ success: true, data: status });
+});
+
+
+// ── Phase 3: Bureau Check Endpoint ──────────────────────────────────────────
+
+app.post('/api/bureau-check', rateLimit(5, 60 * 1000), (req, res) => {
+  try {
+    const { borrowerId, pan, name, dob } = req.body;
+
+    if (!borrowerId || !pan) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: borrowerId, pan'
+      });
+    }
+
+    const result = performBureauCheck(borrowerId, { pan, name, dob });
+
+    res.json({
+      success: true,
+      data: result,
+      notice: 'Bureau Check (Simulated Registry) - Architecture ready for CIBIL/Experian API'
+    });
+  } catch (error) {
+    console.error('[Bureau] Check error:', error);
+    res.status(500).json({ success: false, error: 'Bureau check failed' });
+  }
+});
+
+
+// ── Phase 3: OTP Endpoints ──────────────────────────────────────────────────
+
+const otpRateLimit = rateLimit(5, 60 * 1000); // 5 requests per minute
+
+app.post('/api/otp/send', otpRateLimit, (req, res) => {
+  try {
+    const { destination, channel } = req.body;
+
+    if (!destination) {
+      return res.status(400).json({ success: false, error: 'Destination (email/phone) required' });
+    }
+
+    const result = sendOtp(destination, channel || 'email');
+    res.json({ success: result.success, data: result });
+  } catch (error) {
+    console.error('[OTP] Send error:', error);
+    res.status(500).json({ success: false, error: 'Failed to send OTP' });
+  }
+});
+
+app.post('/api/otp/verify', otpRateLimit, (req, res) => {
+  try {
+    const { destination, code } = req.body;
+
+    if (!destination || !code) {
+      return res.status(400).json({ success: false, error: 'Destination and code required' });
+    }
+
+    const result = verifyOtp(destination, code);
+    res.json({ success: result.success, data: result });
+  } catch (error) {
+    console.error('[OTP] Verify error:', error);
+    res.status(500).json({ success: false, error: 'OTP verification failed' });
+  }
+});
+
+
+// ── Phase 3: Extended Audit Log ─────────────────────────────────────────────
+
+app.get('/api/audit/full', (req, res) => {
+  const consentAudit = getAuditLog();
+  const ekycAudit = getEkycAuditLog();
+  const bureauAudit = getBureauAuditLog();
+  const otpAudit = getOtpAuditLog();
+
+  res.json({
+    success: true,
+    data: {
+      consent: consentAudit,
+      ekyc: ekycAudit,
+      bureau: bureauAudit,
+      otp: otpAudit,
+      totalEntries: consentAudit.length + ekycAudit.length + bureauAudit.length + otpAudit.length
+    }
+  });
+});
+
+
 // Serve frontend for any other routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(` SahayCredit Onboarding Server Running!`);
+  console.log('==================================================');
+  console.log(' SahayCredit Onboarding Server (Phase 3)');
   console.log(` Local URL: http://localhost:${PORT}`);
   console.log(` Model: ${modelLoaded ? 'XGBoost ML Engine' : 'Fallback Rule-Based'}`);
-  console.log(`==================================================`);
+  console.log(' Modules: eKYC(sandbox) | Bureau(sandbox) | OTP(dev) | Auth(JWT)');
+  console.log('==================================================');
 });
