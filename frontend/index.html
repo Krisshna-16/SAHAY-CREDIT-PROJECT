@@ -1,1590 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SahayCredit Onboarding - Alternate Credit Scoring</title>
-  
-  <!-- Premium Modern Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Custom Styling -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SahayCredit - Alternate Credit Scoring</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Landing Page Specific Overrides & Additions */
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-deep, #0D1B2A);
+            color: var(--text-main, #FFFFFF);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ambient Glows for Landing */
+        .landing-glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--primary-glow, rgba(2, 128, 144, 0.4)) 0%, transparent 60%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+        
+        .landing-glow-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, var(--secondary-glow, rgba(2, 195, 154, 0.3)) 0%, transparent 60%);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        /* Header Navigation */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2rem;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main, #fff);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--secondary, #02C39A);
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-sub, #E0E1DD);
+            text-decoration: none;
+            font-weight: 400;
+            transition: var(--transition-fast, all 0.2s ease);
+        }
+
+        nav a:hover {
+            color: var(--secondary, #02C39A);
+        }
+
+        .cta-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            background: var(--bg-surface, #1B263B);
+            border: 1px solid var(--border-glass, rgba(255,255,255,0.08));
+            color: var(--text-main, #fff);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-smooth, all 0.35s ease);
+        }
+
+        .cta-btn:hover {
+            background: var(--primary, #028090);
+            border-color: var(--primary, #028090);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            padding: 4rem 2rem;
+            flex-grow: 1;
+            z-index: 10;
+            gap: 4rem;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--text-sub, #E0E1DD) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-muted, #8D99AE);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-smooth, all 0.35s ease);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary, #028090);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(2, 128, 144, 0.3);
+            border: 2px solid var(--primary, #028090);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(2, 128, 144, 0.5);
+            background-color: #029BAE; /* slightly lighter */
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--secondary, #02C39A);
+            border: 2px solid var(--secondary, #02C39A);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(2, 195, 154, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(2, 195, 154, 0.2);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: var(--shadow-main, 0 20px 40px rgba(0,0,0,0.5));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem 1rem;
+                gap: 2rem;
+            }
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            .action-buttons {
+                justify-content: center;
+                flex-direction: column;
+            }
+            nav {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Background decorative elements for rich aesthetics -->
-  <div class="bg-glow bg-glow-1"></div>
-  <div class="bg-glow bg-glow-2"></div>
+    <div class="landing-glow-1"></div>
+    <div class="landing-glow-2"></div>
 
-  <!-- Unified Page Wrapper for Side-by-Side Desktop layout -->
-  <div class="page-wrapper">
+    <header>
+        <a href="#" class="logo">⚡ Sahay<span>Credit</span></a>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Features</a>
+            <a href="#">Contact</a>
+        </nav>
+        <a href="borrower.html" class="cta-btn">Get Started</a>
+    </header>
 
-    <!-- Desktop Left Sidebar: Demo Hub Dashboard -->
-    <aside class="demo-hub-desktop" id="demo-hub-desktop">
-      <div class="hub-header">
-        <div class="logo-area">
-          <span class="logo-accent" style="font-size: 1.5rem;">⚡</span>
-          <span class="logo-text" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">Sahay<span class="logo-sub" style="color: var(--secondary);">Credit</span> <span class="hub-tag" style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(2, 195, 154, 0.15); color: var(--secondary); padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(2, 195, 154, 0.2); margin-left: 6px; letter-spacing: 0.5px; vertical-align: middle;">Demo Suite</span></span>
-        </div>
-        <p class="hub-subtitle" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-top: 8px;">
-          Organized by audience: borrower-facing screens, lender-facing tools, and technical internals. Navigate directly to any view during a live demo.
-        </p>
-      </div>
-
-      <!-- ── Section A: Borrower Side ── -->
-      <div class="hub-section" style="margin-bottom: 18px; border-left: 3px solid rgba(2, 128, 144, 0.5); padding-left: 12px;">
-        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-          <span style="font-size: 0.9rem; color: #8ce1ec; line-height: 1;" aria-hidden="true">●</span>
-          <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(2, 128, 144, 0.15); color: #8ce1ec; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(2, 128, 144, 0.25); letter-spacing: 0.5px;">Borrower Side</span>
-        </div>
-        <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.35;">Screens and tools a borrower interacts with.</p>
-
-        <div class="hub-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div class="hub-card active" style="background: rgba(2, 128, 144, 0.08); border: 1px solid var(--border-accent); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">📱</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Borrower Portal</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Self-assessment flow for thin-file borrowers with behavior check.</p>
-              <span class="badge active-badge" style="font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 8px; background: rgba(2, 128, 144, 0.2); color: #8ce1ec; border: 1px solid rgba(2, 128, 144, 0.3); width: max-content; display: inline-block;">Active in Simulator</span>
+    <main class="hero">
+        <div class="hero-content">
+            <h1>Unlock Alternate Credit with SahayCredit</h1>
+            <p>Gain complete insight into your financial score using our easy-to-use tools. Whether you're building credit from scratch or lending to the underserved, we provide clarity.</p>
+            
+            <div class="action-buttons">
+                <a href="borrower.html" class="btn btn-primary">I am a Borrower</a>
+                <a href="lender.html" class="btn btn-secondary">I am a Lender</a>
             </div>
-          </div>
-
-          <a href="demo.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">⚙️</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Persona Simulator</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Pre-configure alt-data footprints (UPI, Yelp) and trigger fraud cases.</p>
-              <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Launch Simulator →</span>
-            </div>
-          </a>
         </div>
-      </div>
-
-      <!-- ── Section B: Lender Side ── -->
-      <div class="hub-section" style="margin-bottom: 18px; border-left: 3px solid rgba(108, 99, 255, 0.45); padding-left: 12px;">
-        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-          <span style="font-size: 0.9rem; color: #b3adff; line-height: 1;" aria-hidden="true">●</span>
-          <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(108, 99, 255, 0.12); color: #b3adff; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(108, 99, 255, 0.25); letter-spacing: 0.5px;">Lender Side</span>
-        </div>
-        <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.35;">Screens and tools a lender interacts with.</p>
-
-        <div class="hub-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <a href="lender.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">🏦</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Lender Portal</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Applications pool, decision metrics, SHAP, and consent audit trail.</p>
-              <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Go to Portal →</span>
-            </div>
-          </a>
-
-          <a href="map.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">🗺️</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Geospatial Map</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Interactive GIS dashboard of regional credit gaps and risk clusters.</p>
-              <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Open Map →</span>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- ── Section C: Behind the Scenes ── -->
-      <div class="hub-section" style="margin-bottom: 10px; padding-left: 12px;">
-        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-          <span style="font-size: 0.9rem; color: #c8cdd3; line-height: 1;" aria-hidden="true">●</span>
-          <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(255, 255, 255, 0.06); color: #c8cdd3; padding: 2px 8px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); letter-spacing: 0.5px;">Behind the Scenes</span>
-        </div>
-        <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0 0 10px 0; line-height: 1.35;">Model internals, training data, and pitch materials for judges.</p>
-
-        <div class="hub-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <a href="ml_pipeline.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">🧠</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">ML Pipeline</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Actual Optuna tuning charts, training logs, and SHAP overview.</p>
-              <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">View Pipeline →</span>
-            </div>
-          </a>
-
-          <a href="pitch.html" class="hub-card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; transition: all 0.2s;">
-            <div class="hub-card-icon" style="font-size: 1.3rem;">📊</div>
-            <div class="hub-card-content">
-              <h4 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Pitch Slides</h4>
-              <p style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 6px;">Problem statement slide deck, architecture, and roadmaps.</p>
-              <span class="badge-link" style="font-size: 0.65rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center;">Open Deck →</span>
-            </div>
-          </a>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Mobile Device Frame Mockup for Desktop -->
-    <div class="device-frame">
-    <div class="device-screen">
-      
-      <!-- Top Action Bar (Persistent Language Toggle & Logo Icon) -->
-      <header class="app-header">
-        <div class="logo-area">
-          <span class="logo-accent">⚡</span>
-          <span class="logo-text">Sahay<span class="logo-sub">Credit</span></span>
-          <span class="role-badge borrower-badge" style="display: none; font-size: 0.55rem; font-weight: 700; text-transform: uppercase; background: rgba(2, 128, 144, 0.15); color: #8ce1ec; padding: 2px 7px; border-radius: 10px; border: 1px solid rgba(2, 128, 144, 0.25); margin-left: 6px; letter-spacing: 0.5px; vertical-align: middle;">Borrower</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button id="demo-hub-toggle-btn" style="display: none; font-size: 0.68rem; color: var(--secondary); background: rgba(2, 195, 154, 0.1); border: 1px solid var(--secondary); border-radius: 4px; padding: 2px 6px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">⚡ HUB</button>
-          <a href="pitch.html" style="font-size: 0.68rem; color: var(--secondary); text-decoration: none; border: 1px solid var(--secondary); border-radius: 4px; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; transition: all 0.2s ease;">PITCH</a>
-          <button id="lang-toggle-btn" class="lang-toggle" aria-label="Toggle language">
-            <span class="lang-text active" data-lang="en">EN</span>
-            <span class="lang-divider">|</span>
-            <span class="lang-text" data-lang="hi">हि</span>
-          </button>
-        </div>
-      </header>
-
-      <!-- Borrower Flow Top Segmented Progress Indicator -->
-      <div id="borrower-progress-bar" class="borrower-progress-bar">
-        <div class="progress-segment active" data-step="welcome-screen"></div>
-        <div class="progress-segment" data-step="consent-screen"></div>
-        <div class="progress-segment" data-step="quiz-screen"></div>
-        <div class="progress-segment" data-step="processing-screen"></div>
-        <div class="progress-segment" data-step="result-screen"></div>
-      </div>
-
-      <!-- Main Dynamic Content Wrapper -->
-      <main class="content-container">
         
-        <!-- ================= WELCOME SCREEN ================= -->
-        <section id="welcome-screen" class="app-screen active">
-          <div class="welcome-hero animate-fade-in">
-            <div class="hero-badge">
-              <span id="welcome-badge-text">Alternative Scoring</span>
-            </div>
-            <h1 class="hero-title">
-              <span id="welcome-title-top" class="text-gradient">Get a credit score in 3 minutes.</span>
-              <span id="welcome-title-bottom">No CIBIL needed.</span>
-            </h1>
-            <p id="welcome-subtitle" class="hero-desc">
-              We use your UPI activity, mobile bills, and daily life data to build your score.
-            </p>
-          </div>
-
-          <div class="features-list animate-fade-in delay-1">
-            <div class="feature-card">
-              <div class="feature-icon">🛡️</div>
-              <div class="feature-info">
-                <h3 id="feature-1-title">Zero CIBIL Needed</h3>
-                <p id="feature-1-desc">Designed especially for first-time borrowers and thin-file individuals.</p>
-              </div>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🧠</div>
-              <div class="feature-info">
-                <h3 id="feature-2-title">Psychometric Test</h3>
-                <p id="feature-2-desc">A 15-question behavioral quiz covering real-life financial scenarios.</p>
-              </div>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">💸</div>
-              <div class="feature-info">
-                <h3 id="feature-3-title">Instant Credit Line</h3>
-                <p id="feature-3-desc">Get approved for limits up to ₹2,00,000 sent directly to your bank account.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="action-footer animate-fade-in delay-2">
-            <button id="start-btn" class="btn btn-primary btn-glow">
-              <span id="start-btn-text">Check My Score</span>
-              <span class="btn-icon">→</span>
-            </button>
-            <p id="privacy-notice" class="privacy-text">
-              🔒 Your responses are confidential and secure.
-            </p>
-            <a href="demo.html" class="demo-link" style="display: none; text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--secondary); text-decoration: none; font-weight: 600; transition: all 0.2s ease;">
-              📖 See Ramesh's Story (Kirana Shop Demo)
-            </a>
-          </div>
-        </section>
-
-        <!-- ================= CONSENT & DATA-SHARING SCREEN ================= -->
-        <section id="consent-screen" class="app-screen">
-          <div class="consent-header">
-            <div class="rbi-badge">
-              <span class="rbi-dot">●</span> <span id="consent-rbi-text">RBI Account Aggregator Framework</span>
-            </div>
-            <h2 id="consent-headline" class="consent-title">Share Alternate Data</h2>
-            <p id="consent-subtitle" class="consent-desc">Configure what data you want to share. Raw data never leaves your device — only encrypted gradients are shared.</p>
-          </div>
-
-          <div class="consents-list">
-            <!-- 1. UPI/Bank Transactions -->
-            <div class="consent-card-item">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">📊</span>
-                  <div>
-                    <h3 id="consent-upi-title">UPI & Bank Transactions</h3>
-                    <p id="consent-upi-desc" class="consent-purpose">Analyzes income patterns to maximize your credit limit (via RBI Account Aggregator).</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle UPI and bank transaction consent">
-                  <input type="checkbox" id="consent-upi-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-upi-disclosure" class="disclosure-text">Processed on your device. Raw data never leaves your phone.</span>
-              </div>
-            </div>
-
-            <!-- 2. Mobile Bill History -->
-            <div class="consent-card-item">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">📱</span>
-                  <div>
-                    <h3 id="consent-bills-title">Mobile Bill History</h3>
-                    <p id="consent-bills-desc" class="consent-purpose">Measures payment consistency and financial discipline.</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle mobile bill history consent">
-                  <input type="checkbox" id="consent-bills-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-bills-disclosure" class="disclosure-text">Processed on your device. Raw data never leaves your phone.</span>
-              </div>
-            </div>
-
-            <!-- 3. E-Commerce Behavior -->
-            <div class="consent-card-item">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">🛒</span>
-                  <div>
-                    <h3 id="consent-ecom-title">E-Commerce Behavior</h3>
-                    <p id="consent-ecom-desc" class="consent-purpose">Evaluates purchase volumes and checkout trends on Flipkart / Meesho.</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle E-commerce behavior consent">
-                  <input type="checkbox" id="consent-ecom-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-ecom-disclosure" class="disclosure-text">Processed on your device. Raw data never leaves your phone.</span>
-              </div>
-            </div>
-
-            <!-- 4. Geolocation Stability -->
-            <div class="consent-card-item">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">📍</span>
-                  <div>
-                    <h3 id="consent-location-title">Geolocation Stability (6 months)</h3>
-                    <p id="consent-location-desc" class="consent-purpose">Verifies stable home and shop location coordinates.</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle geolocation pattern consent">
-                  <input type="checkbox" id="consent-location-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-location-disclosure" class="disclosure-text">Processed on your device. Raw data never leaves your phone.</span>
-              </div>
-            </div>
-
-            <!-- 5. GST / Merchant Ratings -->
-            <div class="consent-card-item">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">⭐</span>
-                  <div>
-                    <h3 id="consent-gst-title">Merchant / GST Ratings</h3>
-                    <p id="consent-gst-desc" class="consent-purpose">Validates operational ratings and tax compliance scores.</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle Merchant and GST rating consent">
-                  <input type="checkbox" id="consent-gst-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-gst-disclosure" class="disclosure-text">Processed on your device. Raw data never leaves your phone.</span>
-              </div>
-            </div>
-
-            <!-- 6. Bank Transaction History (AA) — Behaviour Score -->
-            <div class="consent-card-item" style="display: none;">
-              <div class="consent-card-header">
-                <div class="consent-card-info">
-                  <span class="consent-icon">🏦</span>
-                  <div>
-                    <h3 id="consent-behaviour-title">Bank Transaction History (AA)</h3>
-                    <p id="consent-behaviour-desc" class="consent-purpose">Analyzes cash flow stability, income regularity, and savings patterns via Account Aggregator.</p>
-                  </div>
-                </div>
-                <label class="switch-toggle" aria-label="Toggle Bank Transaction History consent">
-                  <input type="checkbox" id="consent-behaviour-toggle" checked>
-                  <span class="slider-toggle"></span>
-                </label>
-              </div>
-              <div class="privacy-disclosure">
-                <span class="lock-icon">🔒</span>
-                <span id="consent-behaviour-disclosure" class="disclosure-text">Accessed via RBI Account Aggregator framework. Consent-gated and auditable.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Additional Alternative Data Footprints -->
-          <div class="additional-footprints-section card-glow" style="display: none; margin-top: 25px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px;">
-            <h3 id="consent-footprints-headline" class="rbi-section-label" style="margin-top: 0; margin-bottom: 15px;">Additional Profile Signals</h3>
-            
-            <div class="footprints-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-              <!-- 1. Salary Consistency -->
-              <div class="footprint-select-group" style="display: flex; flex-direction: column; gap: 6px;">
-                <label for="salary-consistency-select" id="lbl-salary-consistency" style="font-size: 0.78rem; font-weight: 600; color: var(--text-main);">How regular is your monthly income?</label>
-                <select id="salary-consistency-select" class="rbi-input-field-text" style="background: rgba(10, 25, 47, 0.95); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; color: var(--text-main); font-size: 0.82rem; outline: none;">
-                  <option value="Very Regular">Very Regular (same date ±2 days)</option>
-                  <option value="Mostly Regular">Mostly Regular (±1 week)</option>
-                  <option value="Irregular">Irregular</option>
-                  <option value="No Fixed Salary">No Fixed Salary</option>
-                </select>
-              </div>
-
-              <!-- 2. Failed Transactions -->
-              <div class="footprint-select-group" style="display: flex; flex-direction: column; gap: 6px;">
-                <label for="failed-tx-select" id="lbl-failed-tx" style="font-size: 0.78rem; font-weight: 600; color: var(--text-main);">Roughly how many failed/bounced payments in last 3 months?</label>
-                <select id="failed-tx-select" class="rbi-input-field-text" style="background: rgba(10, 25, 47, 0.95); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; color: var(--text-main); font-size: 0.82rem; outline: none;">
-                  <option value="0">0</option>
-                  <option value="1-2">1–2</option>
-                  <option value="3-5">3–5</option>
-                  <option value="5+">More than 5</option>
-                </select>
-              </div>
-
-              <!-- 3. Merchant Diversity -->
-              <div class="footprint-select-group" style="display: flex; flex-direction: column; gap: 6px;">
-                <label for="merchant-diversity-select" id="lbl-merchant-diversity" style="font-size: 0.78rem; font-weight: 600; color: var(--text-main);">How many different types of businesses do you pay?</label>
-                <select id="merchant-diversity-select" class="rbi-input-field-text" style="background: rgba(10, 25, 47, 0.95); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; color: var(--text-main); font-size: 0.82rem; outline: none;">
-                  <option value="Many">Many types (groceries, bills, transport, etc.)</option>
-                  <option value="Few">A few types</option>
-                  <option value="One">Mostly one type</option>
-                  <option value="Rarely">Rarely make digital payments</option>
-                </select>
-              </div>
-
-              <!-- 4. Refund Ratio -->
-              <div class="footprint-select-group" style="display: flex; flex-direction: column; gap: 6px;">
-                <label for="refund-ratio-select" id="lbl-refund-ratio" style="font-size: 0.78rem; font-weight: 600; color: var(--text-main);">How often do you request refunds or dispute payments?</label>
-                <select id="refund-ratio-select" class="rbi-input-field-text" style="background: rgba(10, 25, 47, 0.95); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; color: var(--text-main); font-size: 0.82rem; outline: none;">
-                  <option value="Rarely">Rarely (less than 1 in 100 payments)</option>
-                  <option value="Occasionally">Occasionally</option>
-                  <option value="Frequently">Frequently</option>
-                  <option value="Very Often">Very Often</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Digital Signature Box -->
-          <div class="signature-section">
-            <label for="signature-input" id="signature-label" class="signature-label-text">Sign to Confirm Consent</label>
-            <div class="signature-input-wrapper">
-              <input type="text" id="signature-input" class="signature-field" placeholder="Type your Full Name to sign" autocomplete="off">
-              <span class="signature-line"></span>
-            </div>
-            <p id="signature-desc" class="signature-hint">This constitutes a legally binding authorization under the Account Aggregator framework.</p>
-          </div>
-
-          <!-- Lock Reassurance Panel -->
-          <div class="reassurance-panel card-glow">
-            <span class="reassurance-icon">🛡️</span>
-            <span id="reassurance-text" class="reassurance-text-content">Your data stays on your phone. Always.</span>
-          </div>
-
-          <div class="action-footer">
-            <button id="consent-proceed-btn" class="btn btn-primary btn-glow" disabled>
-              <span id="consent-btn-text">I Agree & Continue</span>
-              <span class="btn-icon">→</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= RBI ACCOUNT AGGREGATOR LINK SCREEN ================= -->
-        <section id="rbi-link-screen" class="app-screen">
-          <div class="consent-header">
-            <div class="rbi-badge">
-              <span class="rbi-dot">●</span> <span id="rbi-aa-badge-lbl">RBI Account Aggregator</span>
-            </div>
-            <h2 id="rbi-link-title" class="consent-title">Link Bank Statements</h2>
-            <p id="rbi-link-subtitle" class="consent-desc">Connect bank statements securely via the RBI Account Aggregator network to confirm UPI flow & transactions.</p>
-          </div>
-
-          <!-- Step 1: Bank & AA Handle Input -->
-          <div id="rbi-step-bank-selection" class="rbi-step-container">
-            <h3 id="lbl-select-bank" class="rbi-section-label">Select Your Primary Bank</h3>
-            <div class="rbi-banks-grid">
-              <button type="button" class="rbi-bank-btn" data-bank="UCO">
-                <span class="bank-logo">🏢</span>
-                <span class="bank-name">UCO Bank</span>
-              </button>
-              <button type="button" class="rbi-bank-btn" data-bank="HDFC">
-                <span class="bank-logo">🏦</span>
-                <span class="bank-name">HDFC Bank</span>
-              </button>
-              <button type="button" class="rbi-bank-btn" data-bank="ICICI">
-                <span class="bank-logo">💳</span>
-                <span class="bank-name">ICICI Bank</span>
-              </button>
-              <button type="button" class="rbi-bank-btn" data-bank="SBI">
-                <span class="bank-logo">🏛️</span>
-                <span class="bank-name">State Bank of India</span>
-              </button>
-            </div>
-
-            <div class="rbi-input-group">
-              <label for="rbi-aa-input" id="lbl-rbi-aa-handle" class="rbi-input-label">Account Aggregator Handle / Phone</label>
-              <input type="text" id="rbi-aa-input" class="rbi-input-field-text" placeholder="e.g. 9876543210@onemoney" autocomplete="off">
-              <p id="rbi-aa-hint" class="rbi-input-hint">Or type your 10-digit mobile number linked to your bank account.</p>
-            </div>
-
-            <div class="action-footer" style="margin-top: 25px;">
-              <button id="rbi-request-otp-btn" class="btn btn-primary btn-glow" disabled>
-                <span id="rbi-btn-otp-text">Request Verification OTP</span>
-                <span class="btn-icon">→</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 2: OTP Entry -->
-          <div id="rbi-step-otp-entry" class="rbi-step-container" style="display: none;">
-            <h3 id="lbl-enter-otp" class="rbi-section-label">Enter 6-Digit Consent OTP</h3>
-            
-            <div class="otp-inputs-row">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-              <input type="text" maxlength="1" class="otp-input-field" pattern="[0-9]*" inputmode="numeric">
-            </div>
-            
-            <p id="rbi-otp-sent-hint" class="rbi-otp-hint">Sent via bank to phone linked with selected account</p>
-
-            <div class="action-footer" style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
-              <button id="rbi-verify-otp-btn" class="btn btn-primary btn-glow" disabled>
-                <span id="rbi-btn-verify-text">Verify & Authorize Link</span>
-                <span class="btn-icon">✓</span>
-              </button>
-              <button id="rbi-otp-back-btn" class="btn btn-secondary btn-text-only">
-                <span id="rbi-btn-otp-back">← Back to Bank Selection</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 3: Fetching / Processing Simulation -->
-          <div id="rbi-step-fetching" class="rbi-step-container" style="display: none;">
-            <div class="rbi-status-header">
-              <div class="rbi-spinner">
-                <div class="spinner-circle"></div>
-              </div>
-              <div class="rbi-success-icon" style="display: none;">
-                <span class="success-checkmark">✓</span>
-              </div>
-              <h3 id="rbi-fetch-status-title" class="rbi-status-title">Accessing Accounts</h3>
-            </div>
-
-            <div class="rbi-logs-container card-glow">
-              <div class="rbi-log-line" id="rbi-log-step-1">• Connecting to Account Aggregator handle...</div>
-              <div class="rbi-log-line" id="rbi-log-step-2">• Discovered 1 Savings Bank Account...</div>
-              <div class="rbi-log-line" id="rbi-log-step-3">• Transferring 12-month transaction statements...</div>
-              <div class="rbi-log-line" id="rbi-log-step-4">• Analyzing monthly credit/debit transaction profiles...</div>
-            </div>
-
-            <div class="action-footer" style="margin-top: 30px;">
-              <button id="rbi-proceed-quiz-btn" class="btn btn-primary btn-glow" disabled>
-                <span id="rbi-btn-proceed-text">Proceed to Questionnaire</span>
-                <span class="btn-icon">→</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================= eKYC VERIFICATION SCREEN ================= -->
-        <section id="ekyc-screen" class="app-screen">
-          <div class="consent-header">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <span style="font-size: 0.6rem; font-weight: 700; text-transform: uppercase; background: rgba(244, 162, 97, 0.15); color: #F4A261; padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(244, 162, 97, 0.3); letter-spacing: 0.5px;">SANDBOX MODE</span>
-            </div>
-            <h2 id="ekyc-title" class="consent-title">Identity Verification (eKYC)</h2>
-            <p id="ekyc-subtitle" class="consent-desc">Verify your identity using Aadhaar and PAN. This is required before your credit score can be generated.</p>
-          </div>
-
-          <!-- Step 1: Document Input -->
-          <div id="ekyc-step-input" class="rbi-step-container">
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-              <!-- Aadhaar Input -->
-              <div class="rbi-input-group">
-                <label for="ekyc-aadhaar-input" class="rbi-input-label" style="display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 0.85rem;">🆔</span> Aadhaar Number
-                </label>
-                <input type="text" id="ekyc-aadhaar-input" class="rbi-input-field-text" placeholder="e.g. 2345 6789 0123" maxlength="14" autocomplete="off" style="letter-spacing: 2px; font-family: monospace;">
-                <p class="rbi-input-hint" style="font-size: 0.62rem; color: var(--text-muted); margin-top: 4px;">12-digit Aadhaar number. In sandbox mode, use any valid format.</p>
-              </div>
-
-              <!-- PAN Input -->
-              <div class="rbi-input-group">
-                <label for="ekyc-pan-input" class="rbi-input-label" style="display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 0.85rem;">📄</span> PAN Number
-                </label>
-                <input type="text" id="ekyc-pan-input" class="rbi-input-field-text" placeholder="e.g. ABCDE1234F" maxlength="10" autocomplete="off" style="text-transform: uppercase; letter-spacing: 1px; font-family: monospace;">
-                <p class="rbi-input-hint" style="font-size: 0.62rem; color: var(--text-muted); margin-top: 4px;">10-character PAN (e.g. ABCDE1234F). Format: 5 letters, 4 digits, 1 letter.</p>
-              </div>
-
-              <!-- Name for verification -->
-              <div class="rbi-input-group">
-                <label for="ekyc-name-input" class="rbi-input-label" style="display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 0.85rem;">👤</span> Full Name (as on documents)
-                </label>
-                <input type="text" id="ekyc-name-input" class="rbi-input-field-text" placeholder="e.g. Ramesh Kumar" autocomplete="off">
-              </div>
-            </div>
-
-            <div class="action-footer" style="margin-top: 25px;">
-              <button id="ekyc-verify-btn" class="btn btn-primary btn-glow" disabled>
-                <span id="ekyc-verify-btn-text">Verify Identity</span>
-                <span class="btn-icon">→</span>
-              </button>
-              <p style="font-size: 0.6rem; color: var(--text-muted); text-align: center; margin-top: 8px;">
-                🔒 Your documents are verified securely and never stored on our servers.
-              </p>
-            </div>
-          </div>
-
-          <!-- Step 2: Verification Processing -->
-          <div id="ekyc-step-verifying" class="rbi-step-container" style="display: none;">
-            <div class="rbi-status-header">
-              <div class="rbi-spinner">
-                <div class="spinner-circle"></div>
-              </div>
-              <h3 id="ekyc-verify-status" class="rbi-status-title">Verifying Documents...</h3>
-            </div>
-            <div class="rbi-logs-container card-glow">
-              <div class="rbi-log-line" id="ekyc-log-1">• Validating Aadhaar number format...</div>
-              <div class="rbi-log-line" id="ekyc-log-2">• Cross-checking PAN with NSDL registry...</div>
-              <div class="rbi-log-line" id="ekyc-log-3">• Matching name across documents...</div>
-              <div class="rbi-log-line" id="ekyc-log-4">• Generating verification certificate...</div>
-            </div>
-          </div>
-
-          <!-- Step 3: Success -->
-          <div id="ekyc-step-success" class="rbi-step-container" style="display: none;">
-            <div style="text-align: center; padding: 20px 0;">
-              <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
-              <h3 style="font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 6px;">Identity Verified</h3>
-              <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.45;">Your Aadhaar and PAN have been successfully verified. You can now proceed to the psychometric assessment.</p>
-            </div>
-            <div style="background: rgba(2, 195, 154, 0.06); border: 1px solid rgba(2, 195, 154, 0.15); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem;">
-                <span style="color: var(--text-muted);">Status</span>
-                <span style="color: var(--secondary); font-weight: 700;">Verified ✓</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem;">
-                <span style="color: var(--text-muted);">Verification ID</span>
-                <span id="ekyc-verification-id" style="color: var(--text-main); font-weight: 600; font-family: monospace; font-size: 0.62rem;">EKYC-SANDBOX-XXX</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.68rem;">
-                <span style="color: var(--text-muted);">Provider</span>
-                <span style="color: var(--warning); font-weight: 600;">Sandbox (Demo)</span>
-              </div>
-            </div>
-            <div class="action-footer" style="margin-top: 20px;">
-              <button id="ekyc-proceed-btn" class="btn btn-primary btn-glow">
-                <span>Proceed to Assessment</span>
-                <span class="btn-icon">→</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 4: Failure -->
-          <div id="ekyc-step-failed" class="rbi-step-container" style="display: none;">
-            <div style="text-align: center; padding: 20px 0;">
-              <div style="font-size: 3rem; margin-bottom: 12px;">❌</div>
-              <h3 style="font-size: 1rem; font-weight: 700; color: #e74c3c; margin-bottom: 6px;">Verification Failed</h3>
-              <p id="ekyc-fail-reason" style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.45;">Document verification could not be completed. Please check your details and try again.</p>
-            </div>
-            <div class="action-footer" style="margin-top: 20px;">
-              <button id="ekyc-retry-btn" class="btn btn-primary btn-glow">
-                <span>Try Again</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================= QUESTIONNAIRE SCREEN ================= -->
-        <section id="quiz-screen" class="app-screen">
-          <div class="quiz-progress-wrapper">
-            <div class="progress-info">
-              <span id="question-number-label">Question 1 of 15</span>
-              <span id="question-category-label" class="category-tag">Financial Discipline</span>
-            </div>
-            <div class="progress-bar-container">
-              <div id="quiz-progress-bar" class="progress-bar-fill" style="width: 6.67%;"></div>
-            </div>
-          </div>
-
-          <!-- Question container that handles smooth slide transitions -->
-          <div class="question-container-slider">
-            <div id="question-card" class="question-card">
-              <h2 id="question-text" class="question-prompt">
-                When you receive your monthly income/earnings, what do you usually do first?
-              </h2>
-              
-              <div id="options-list" class="options-list" role="radiogroup" aria-labelledby="question-text">
-                <!-- Dynamically populated via app.js -->
-              </div>
-            </div>
-          </div>
-
-          <div class="quiz-footer">
-            <button id="back-btn" class="btn btn-secondary btn-icon-only" aria-label="Previous question">
-              ←
-            </button>
-            <span id="footer-save-indicator" class="save-status">✓ Auto-saved</span>
-          </div>
-        </section>
-
-        <!-- ================= PROCESSING SCREEN ================= -->
-        <section id="processing-screen" class="app-screen">
-          <div class="processing-content">
-            <!-- Pulsing Radar / Circle Animation -->
-            <div class="pulse-container">
-              <div class="pulse-circle pulse-1"></div>
-              <div class="pulse-circle pulse-2"></div>
-              <div class="pulse-circle pulse-3"></div>
-              <div class="pulse-center">
-                <span class="pulse-icon">⚡</span>
-              </div>
-            </div>
-            
-            <h2 id="processing-headline" class="processing-title">Analyzing profile...</h2>
-            
-            <div class="processing-steps">
-              <div class="step-item active" id="step-fd">
-                <span class="step-check">●</span>
-                <span id="step-fd-text" class="step-label">Assessing Financial Discipline</span>
-              </div>
-              <div class="step-item" id="step-ra">
-                <span class="step-check">○</span>
-                <span id="step-ra-text" class="step-label">Evaluating Risk Appetite</span>
-              </div>
-              <div class="step-item" id="step-ri">
-                <span class="step-check">○</span>
-                <span id="step-ri-text" class="step-label">Verifying Repayment Intent</span>
-              </div>
-              <div class="step-item" id="step-scoring">
-                <span class="step-check">○</span>
-                <span id="step-scoring-text" class="step-label">Generating Sahay Credit Score</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================= RESULT SCREEN ================= -->
-        <section id="result-screen" class="app-screen">
-          <div class="result-header">
-            <h2 id="result-headline" class="result-title">Your Credit Profile</h2>
-            <p id="result-tagline" class="result-desc">Based on your psychometric indicators.</p>
-          </div>
-
-          <!-- Glassmorphism Score Card -->
-          <div class="score-card">
-            <!-- Loan Eligibility Flag Badge -->
-            <div class="eligibility-wrapper">
-              <span id="eligibility-flag" class="eligibility-badge eligible">Eligible</span>
-            </div>
-
-            <div class="gauge-container">
-              <!-- SVG Dial Gauge -->
-              <svg class="score-gauge" viewBox="0 0 100 60">
-                <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-linecap="round" />
-                <path id="gauge-fill" class="gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="125.6" />
-              </svg>
-              <div class="gauge-value-box">
-                <div class="score-value-row">
-                  <span id="score-value" class="score-number">720</span>
-                  <span id="confidence-band" class="score-confidence">±15</span>
-                </div>
-                <span id="score-max" class="score-out-of">/ 900</span>
-              </div>
-            </div>
-            
-            <div id="confidence-bounds-label" class="confidence-bounds-text">Confidence Interval: 705 - 735</div>
-
-            <!-- Data Sources Indicator -->
-            <div id="data-sources-indicator" style="display: none; text-align: center; margin-top: 6px; font-size: 0.7rem; color: var(--secondary); font-weight: 600; letter-spacing: 0.02em; padding: 4px 12px; background: rgba(108,99,255,0.06); border-radius: 16px; display: inline-block;">
-              <span id="data-sources-indicator-text">Score based on 1 of 3 available data sources</span>
-            </div>
-            
-            <div class="profile-tier-badge">
-              <span id="profile-tier-title">Tier:</span> <strong id="profile-tier-value">A</strong>
-            </div>
-
-            <div class="profile-type-box">
-              <h3 id="profile-name">Calculated Visionary</h3>
-              <p id="profile-desc">Strong business acumen with solid repayment habits and balanced risk awareness.</p>
-            </div>
-
-            <!-- Confidence Score Section -->
-            <div class="confidence-section" style="margin-top: 15px; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                <span id="lbl-score-confidence-text" style="font-size: 0.76rem; font-weight: 700; color: var(--text-main);">Score Confidence: 40%</span>
-                
-                <!-- Info Tooltip Icon -->
-                <div class="tooltip-container" style="position: relative; display: inline-block; cursor: pointer;">
-                  <span class="info-icon" style="color: var(--text-muted); font-size: 0.8rem; padding: 2px 5px;">ⓘ</span>
-                  <span id="lbl-confidence-tooltip-desc" class="tooltip-text">Confidence reflects how much data was available to assess your profile. More data signals = higher confidence = better loan terms.</span>
-                </div>
-              </div>
-
-              <!-- Confidence Progress Bar -->
-              <div class="confidence-bar-track" style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
-                <div id="confidence-bar-fill" class="confidence-bar-fill" style="width: 40%; height: 100%; border-radius: 3px; transition: width 0.8s ease;"></div>
-              </div>
-              
-              <p id="confidence-context-text" style="font-size: 0.68rem; color: var(--text-muted); margin: 0; line-height: 1.35; text-align: left;">Low confidence — lenders may request additional verification</p>
-            </div>
-          </div>
-
-          <!-- Fraud Status Card -->
-          <div id="fraud-status-card" class="fraud-card card-glow" style="margin-top: 20px; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s ease; display: none;">
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-              <span id="fraud-status-icon" style="font-size: 1.3rem;">🛡️</span>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <h4 id="fraud-status-label" style="font-size: 0.82rem; font-weight: 700; margin: 0; color: var(--text-main);">No Fraud Signals Detected</h4>
-                <p id="fraud-status-desc" style="font-size: 0.72rem; color: var(--text-muted); margin: 0; line-height: 1.35; text-align: left;">All alternate data points verified cleanly.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- ML Credit Score Card (from Python XGBoost service) -->
-          <div id="ml-score-card" style="display:none; margin-top:16px; padding:16px; border-radius:12px; border:1px solid rgba(108,99,255,0.2); background:rgba(108,99,255,0.04); transition:all 0.3s ease;">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-              <span style="font-size:1.2rem;">🤖</span>
-              <h4 id="ml-card-title" style="font-size:0.82rem; font-weight:700; margin:0; color:var(--text-main);">ML Credit Score</h4>
-              <span id="ml-powered-badge" style="font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:10px; background:rgba(108,99,255,0.15); color:#9d96ff; letter-spacing:0.04em; margin-left:auto;">XGBoost · Home Credit Model</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:16px;">
-              <div style="display:flex; flex-direction:column; align-items:center; background:rgba(255,255,255,0.03); border-radius:10px; padding:10px 18px; border:1px solid rgba(255,255,255,0.05);">
-                <span id="ml-credit-score-val" style="font-size:1.8rem; font-weight:800; color:var(--text-main); line-height:1;">—</span>
-                <span style="font-size:0.62rem; color:var(--text-muted); margin-top:2px;">/ 900</span>
-              </div>
-              <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:0.72rem; color:var(--text-muted);">Risk Level:</span>
-                  <span id="ml-risk-badge" style="font-size:0.7rem; font-weight:700; padding:2px 10px; border-radius:6px;">—</span>
-                </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="font-size:0.72rem; color:var(--text-muted);">Default Probability:</span>
-                  <span id="ml-default-prob" style="font-size:0.72rem; font-weight:700; color:var(--text-main);">—</span>
-                </div>
-                <p id="ml-card-desc" style="font-size:0.67rem; color:var(--text-muted); margin:0; line-height:1.4;"></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Credit Limit & Recommended Interest Rate Grid -->
-          <div class="results-financial-grid" style="margin-top: 20px;">
-            <!-- Credit Limit Box -->
-            <div class="financial-card card-glow">
-              <span id="limit-label" class="financial-card-title">Approved Credit Limit</span>
-              <div class="financial-card-amount">
-                <span class="currency-symbol">₹</span>
-                <span id="limit-value" class="limit-number">35,000</span>
-              </div>
-            </div>
-            <!-- Recommended Interest Rate Box -->
-            <div class="financial-card card-glow">
-              <span id="rate-label" class="financial-card-title">Suggested Rate</span>
-              <div class="financial-card-amount">
-                <span id="rate-value" class="limit-number">14</span>
-                <span class="pct-symbol">% p.a.</span>
-              </div>
-            </div>
-          </div>
-          <p id="limit-sub" class="limit-desc">Zero pre-closure fees, transparent terms.</p>
-
-          <!-- Sub-dimension progress indicators -->
-          <div class="dimensions-breakdown">
-            <h4 id="breakdown-headline" class="breakdown-title">Behavioral Dimensions</h4>
-            
-            <div class="dimension-progress-item">
-              <div class="dim-info">
-                <span id="dim-fd-label">Financial Discipline</span>
-                <span id="dim-fd-val" class="dim-pct">75%</span>
-              </div>
-              <div class="dim-track">
-                <div id="dim-fd-bar" class="dim-fill fill-fd" style="width: 75%;"></div>
-              </div>
-            </div>
-
-            <div class="dimension-progress-item">
-              <div class="dim-info">
-                <span id="dim-ra-label">Risk Attitude</span>
-                <span id="dim-ra-val" class="dim-pct">60%</span>
-              </div>
-              <div class="dim-track">
-                <div id="dim-ra-bar" class="dim-fill fill-ra" style="width: 60%;"></div>
-              </div>
-            </div>
-
-            <div class="dimension-progress-item">
-              <div class="dim-info">
-                <span id="dim-ri-label">Repayment Intent</span>
-                <span id="dim-ri-val" class="dim-pct">80%</span>
-              </div>
-              <div class="dim-track">
-                <div id="dim-ri-bar" class="dim-fill fill-ri" style="width: 80%;"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Composite Score Breakdown (consented sources) -->
-          <div class="composite-breakdown-card card-glow" id="composite-breakdown-container" style="display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
-            <h4 class="breakdown-title" id="composite-breakdown-headline" style="margin-top: 0; margin-bottom: 12px;">Composite Score Weights</h4>
-            <div id="composite-breakdown-list" style="display: flex; flex-direction: column; gap: 10px;">
-              <!-- Dynamically populated -->
-            </div>
-            <div id="composite-explanation-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;"></div>
-          </div>
-
-          <!-- Manage Data Permissions Panel -->
-          <div id="manage-permissions-panel" style="display: none; margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
-            <h4 id="permissions-headline" class="breakdown-title" style="margin-top: 0; margin-bottom: 10px; font-size: 0.82rem;">Manage Data Permissions</h4>
-            <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0 0 12px 0;">You can revoke any data source at any time. Revoking removes that source from future score calculations.</p>
-            <div id="permissions-list" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-
-          <!-- SHAP Credit Drivers Section -->
-          <div class="shap-factors-section">
-            <h4 id="shap-headline" class="breakdown-title">Top 3 Score Drivers (SHAP)</h4>
-            <div id="shap-factors-list" class="shap-list">
-              <!-- Dynamically populated -->
-            </div>
-            <div style="margin-top: 12px; width: 100%;">
-              <button id="view-shap-btn" class="btn btn-secondary btn-glow" style="width: 100%; border-color: rgba(2,195,154,0.3); font-size: 0.78rem; padding: 10px 16px;">
-                <span id="view-shap-btn-text">Why did you get this score? →</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Improve Your Score Section -->
-          <div class="score-improvement-section">
-            <h4 id="improvement-headline" class="breakdown-title">How to Improve Your Score</h4>
-            <div id="improvement-tips-list" class="tips-list">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-
-          <!-- Scoring Methodology Transparency Card -->
-          <div class="methodology-card card-glow" style="margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05);">
-            <h4 style="margin: 0 0 10px 0; font-size: 0.78rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 0.9rem;">🔬</span>
-              <span id="methodology-title">Scoring Methodology</span>
-            </h4>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(108, 99, 255, 0.04); border-radius: 8px; border: 1px solid rgba(108, 99, 255, 0.08);">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Method</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: var(--secondary);">PDO Scorecard (FICO-style)</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(108, 99, 255, 0.04); border-radius: 8px; border: 1px solid rgba(108, 99, 255, 0.08);">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Calibration</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: var(--secondary);">Platt Scaling (ECE: 0.001)</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(108, 99, 255, 0.04); border-radius: 8px; border: 1px solid rgba(108, 99, 255, 0.08);">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Model</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: var(--secondary);">XGBoost (450 trees, 31 features)</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(108, 99, 255, 0.04); border-radius: 8px; border: 1px solid rgba(108, 99, 255, 0.08);">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Validation AUC</span>
-                <span style="font-size: 0.7rem; font-weight: 700; color: var(--secondary);">0.756</span>
-              </div>
-            </div>
-            <p style="font-size: 0.62rem; color: var(--text-muted); margin: 8px 0 0 0; line-height: 1.4; opacity: 0.7;" id="methodology-note">
-              Score = Offset + Factor × ln(odds). Anchor: 600 = 3:1 good:bad odds. PDO: 50 points doubles odds. Psychometric modifier capped at ±25 pts.
-            </p>
-          </div>
-
-          <div class="action-footer">
-            <button id="apply-btn" class="btn btn-primary btn-glow">
-              <span id="apply-btn-text">Apply for Loan</span>
-            </button>
-            <button id="emi-planner-btn" class="btn btn-secondary btn-glow" style="margin-top: 10px; width: 100%;">
-              📄 <span id="emi-planner-btn-text">EMI Calculator & Affordability Planner</span>
-            </button>
-            <button id="doc-vault-btn" class="btn btn-secondary btn-glow" style="margin-top: 10px; width: 100%;">
-              🔒 <span id="doc-vault-btn-text">Document Vault & Data Lock</span>
-            </button>
-            <button id="privacy-btn" class="btn btn-secondary btn-glow" style="margin-top: 10px; width: 100%; border-color: rgba(2,195,154,0.4);">
-              🛡️ <span id="privacy-btn-text">How We Protect Your Data</span>
-            </button>
-            <button id="restart-btn" class="btn btn-secondary btn-text-only" style="margin-top: 5px;">
-              <span id="restart-btn-text">Retake Assessment</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= SHAP EXPLAINABILITY SCREEN ================= -->
-        <section id="shap-screen" class="app-screen">
-          <div class="consent-header">
-            <h2 id="shap-screen-title" class="consent-title">Why This Score?</h2>
-            <p id="shap-screen-subtitle" class="consent-desc">SHAP Attribution analysis showing how each data feature influenced your final credit score from the 550 base score.</p>
-          </div>
-
-          <!-- Score Card Preview -->
-          <div class="score-card" style="margin-bottom: 25px; padding: 15px 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-              <span id="lbl-report-preview" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Verified Profile Score</span>
-              <span id="shap-final-score-val" class="score-number" style="font-size: 2rem; margin: 0; line-height: 1;">720</span>
-            </div>
-          </div>
-
-          <!-- SHAP Waterfall Chart Grid -->
-          <div class="shap-waterfall-card card-glow" style="padding: 20px 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 12px;">
-              <span>Alternative Signal</span>
-              <span style="text-align: right;">Impact</span>
-            </div>
-
-            <!-- Waterfall Grid Rows Container -->
-            <div class="waterfall-rows-list" style="display: flex; flex-direction: column; gap: 14px;">
-              
-              <!-- 1. UPI -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-upi" class="waterfall-lbl">📊 UPI Transactions</span>
-                  <span id="val-feat-upi" class="waterfall-val">₹42,000/mo</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-upi" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-upi" class="waterfall-impact-col positive">+42 pts</span>
-              </div>
-
-              <!-- 2. Mobile -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-mobile" class="waterfall-lbl">📱 Mobile Bills</span>
-                  <span id="val-feat-mobile" class="waterfall-val">12 mos</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-mobile" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-mobile" class="waterfall-impact-col positive">+32 pts</span>
-              </div>
-
-              <!-- 3. Geo -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-geo" class="waterfall-lbl">📍 Geolocation Stability</span>
-                  <span id="val-feat-geo" class="waterfall-val">Stable</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-geo" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-geo" class="waterfall-impact-col positive">+18 pts</span>
-              </div>
-
-              <!-- 4. Ecom -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-ecom" class="waterfall-lbl">🛒 E-Commerce Log</span>
-                  <span id="val-feat-ecom" class="waterfall-val">High</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-ecom" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-ecom" class="waterfall-impact-col positive">+12 pts</span>
-              </div>
-
-              <!-- 5. Psycho -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-psycho" class="waterfall-lbl">🧠 Psychometric Evaluation</span>
-                  <span id="val-feat-psycho" class="waterfall-val">74/100</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-psycho" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-psycho" class="waterfall-impact-col positive">+10 pts</span>
-              </div>
-
-              <!-- 6. GST -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-gst" class="waterfall-lbl">⭐ Merchant / GST Ratings</span>
-                  <span id="val-feat-gst" class="waterfall-val">4.2★</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-gst" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-gst" class="waterfall-impact-col positive">+8 pts</span>
-              </div>
-
-              <!-- 7. Salary Consistency -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-sal-const" class="waterfall-lbl">💰 Salary Consistency</span>
-                  <span id="val-feat-sal-const" class="waterfall-val">Very Regular</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-sal-const" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-sal-const" class="waterfall-impact-col positive">+14 pts</span>
-              </div>
-
-              <!-- 8. Failed Transactions -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-failed-tx" class="waterfall-lbl">⚠️ Failed Transactions</span>
-                  <span id="val-feat-failed-tx" class="waterfall-val">0</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-failed-tx" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-failed-tx" class="waterfall-impact-col positive">+12 pts</span>
-              </div>
-
-              <!-- 9. Merchant Diversity -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-merch-div" class="waterfall-lbl">🏪 Merchant Diversity</span>
-                  <span id="val-feat-merch-div" class="waterfall-val">Many</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-merch-div" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-merch-div" class="waterfall-impact-col positive">+8 pts</span>
-              </div>
-
-              <!-- 10. Refund Ratio -->
-              <div class="waterfall-row-item">
-                <div class="waterfall-meta-col">
-                  <span id="lbl-feat-refund-ratio" class="waterfall-lbl">↩️ Refund Ratio</span>
-                  <span id="val-feat-refund-ratio" class="waterfall-val">Rarely</span>
-                </div>
-                <div class="waterfall-chart-col">
-                  <div class="waterfall-bar-track">
-                    <div id="bar-refund-ratio" class="waterfall-bar positive"></div>
-                  </div>
-                </div>
-                <span id="impact-feat-refund-ratio" class="waterfall-impact-col positive">+6 pts</span>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Report Box Preview -->
-          <div id="report-box" class="card-glow" style="display: none; padding: 18px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 25px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
-              <span style="font-size: 0.72rem; font-weight: 700; color: var(--secondary); text-transform: uppercase;">Bilingual Report Preview</span>
-              <button id="close-report-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; padding: 2px 6px;">✕</button>
-            </div>
-            <pre id="report-text" style="font-family: monospace; font-size: 0.65rem; color: var(--text-main); margin: 0; white-space: pre-wrap; line-height: 1.4; text-align: left;"></pre>
-          </div>
-
-          <!-- Actions -->
-          <div class="action-footer" style="display: flex; flex-direction: column; gap: 12px;">
-            <button id="share-report-btn" class="btn btn-primary btn-glow">
-              <span id="share-report-btn-text">Share Score Report</span>
-            </button>
-            <button id="shap-compare-btn" class="btn btn-secondary btn-glow">
-              <span id="shap-compare-btn-text">View Matching Loan Offers</span>
-            </button>
-            <button id="shap-back-btn" class="btn btn-secondary btn-text-only">
-              <span id="shap-back-btn-text">← Back to Score Summary</span>
-            </button>
-          </div>
-        </section>
-
-
-
-        <!-- ================= COMPARISON SCREEN ================= -->
-        <section id="comparison-screen" class="app-screen">
-          <div class="comparison-header">
-            <h2 id="comp-headline" class="result-title">Compare Loan Offers</h2>
-            <p id="comp-tagline" class="result-desc">Choose the best pre-approved offer matching your profile.</p>
-          </div>
-
-          <!-- Lender Comparison Cards List -->
-          <div class="lenders-list" id="lenders-list">
-            <!-- Populated dynamically via app.js -->
-          </div>
-
-          <!-- Total Cost Bar Chart Section -->
-          <div class="chart-card">
-            <h4 id="chart-title" class="breakdown-title">Total Cost Comparison</h4>
-            <p id="chart-subtitle" class="limit-desc" style="margin-bottom: 12px; margin-top: -6px;">Principal + Total Interest + Fees over tenure</p>
-            <div id="cost-chart-bars" class="cost-chart-container">
-              <!-- Rendered dynamically via app.js -->
-            </div>
-          </div>
-
-          <div class="action-footer" style="margin-top: 15px;">
-            <button id="comp-back-btn" class="btn btn-secondary btn-text-only" style="width: 100%;">
-              <span id="comp-back-btn-text">← Back to Score</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= EMI PLANNER SCREEN ================= -->
-        <section id="emi-planner-screen" class="app-screen">
-          <div class="comparison-header">
-            <h2 id="emi-plan-headline" class="result-title">Interactive EMI Planner</h2>
-            <p id="emi-plan-tagline" class="result-desc">Structure your repayments and test loan affordability.</p>
-          </div>
-
-          <div class="planner-box" style="background: var(--bg-card-glass); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
-            <!-- Amount Input Slider -->
-            <div class="form-group">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                <label id="lbl-plan-amount" style="font-size: 0.85rem; font-weight: 600; color: var(--text-sub);">Desired Loan Amount</label>
-                <span id="plan-amount-val" style="font-size: 0.95rem; font-weight: 700; color: var(--secondary);">₹1,00,000</span>
-              </div>
-              <input type="range" id="plan-amount-input" class="range-slider" min="10000" max="500000" step="5000" value="100000" style="width: 100%;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
-                <span>₹10,000</span>
-                <span>₹5,00,000</span>
-              </div>
-            </div>
-
-            <!-- Interest Rate Input -->
-            <div class="form-group" style="margin-top: 15px;">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                <label id="lbl-plan-rate" style="font-size: 0.85rem; font-weight: 600; color: var(--text-sub);">Interest Rate (% p.a.)</label>
-              </div>
-              <input type="number" id="plan-rate-input" class="range-input" style="width: 100%; border-radius: 8px; text-align: left; padding: 10px; font-size: 0.95rem; background: var(--bg-input-glass); border: 1px solid var(--border-glass); color: var(--text-main);" min="5" max="35" step="0.5" value="14">
-            </div>
-
-            <!-- Tenure Selector -->
-            <div class="form-group" style="margin-top: 15px;">
-              <label id="lbl-plan-tenure" style="font-size: 0.85rem; font-weight: 600; color: var(--text-sub); display: block; margin-bottom: 6px;">Loan Tenure Period (Months)</label>
-              <div class="tenure-btn-group" id="plan-tenure-group">
-                <button class="tenure-btn" data-tenure="6">6</button>
-                <button class="tenure-btn active" data-tenure="12">12</button>
-                <button class="tenure-btn" data-tenure="18">18</button>
-                <button class="tenure-btn" data-tenure="24">24</button>
-                <button class="tenure-btn" data-tenure="36">36</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Output summary -->
-          <div class="chart-card" style="margin-top: 20px;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px;">
-              <span id="lbl-est-emi" style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Estimated Monthly EMI</span>
-              <span id="plan-emi-output" style="font-size: 2.2rem; font-weight: 800; color: var(--secondary);">₹8,979</span>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-glass); padding-top: 12px; margin-top: 8px;">
-              <div style="display: flex; flex-direction: column;">
-                <span id="lbl-total-interest" style="font-size: 0.75rem; color: var(--text-muted);">Total Interest</span>
-                <span id="plan-interest-output" style="font-weight: 700; color: var(--text-main);">₹7,744</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                <span id="lbl-total-payable" style="font-size: 0.75rem; color: var(--text-muted);">Total Amount Payable</span>
-                <span id="plan-payable-output" style="font-weight: 700; color: var(--text-main);">₹1,07,744</span>
-              </div>
-            </div>
-
-            <!-- Donut Chart & Legend -->
-            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 18px; border-top: 1px dashed var(--border-glass); padding-top: 18px;">
-              <div class="donut-chart" id="plan-donut-chart" style="--pct-principal: 93%;">
-                <div style="position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 2;">
-                  <span id="plan-donut-center-lbl" style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase;">Principal</span>
-                  <span id="plan-donut-center-val" style="font-size: 1rem; font-weight: 800; color: var(--primary);">93%</span>
-                </div>
-              </div>
-              <div class="donut-chart-legend" style="display: flex; justify-content: center; gap: 15px; margin-top: 14px;">
-                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-sub);">
-                  <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--primary); display: inline-block;"></span>
-                  <span id="lbl-legend-principal">Principal</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-sub);">
-                  <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--amber); display: inline-block;"></span>
-                  <span id="lbl-legend-interest">Interest</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Affordability Analysis -->
-          <div class="chart-card" style="margin-top: 20px;">
-            <h4 class="breakdown-title" id="lbl-affordability-title">Can I Afford This?</h4>
-            <p class="limit-desc" id="lbl-affordability-subtitle" style="margin-bottom: 12px; margin-top: -6px;">Check your debt-to-income ratio based on your monthly income.</p>
-            
-            <div class="form-group">
-              <label id="lbl-monthly-income" style="font-size: 0.8rem; font-weight: 600; color: var(--text-sub); display: block; margin-bottom: 6px;">Your Monthly Income</label>
-              <input type="number" id="plan-income-input" class="range-input" style="width: 100%; border-radius: 8px; text-align: left; padding: 10px; background: var(--bg-input-glass); border: 1px solid var(--border-glass); color: var(--text-main);" placeholder="e.g. 50000" value="35000">
-            </div>
-
-            <div id="plan-afford-card" class="psych-summary-box" style="margin-top: 14px; border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: rgba(2, 195, 154, 0.05);">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="lbl-emi-ratio" style="font-size: 0.8rem; color: var(--text-sub);">EMI as % of Income:</span>
-                <strong id="plan-afford-ratio" style="font-size: 1rem; font-weight: 800; color: var(--secondary);">25.6%</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                <span id="lbl-status-verdict" style="font-size: 0.8rem; color: var(--text-sub);">Affordability Status:</span>
-                <span id="plan-afford-status" class="status-pill status-approve" style="font-size: 0.78rem; font-weight: 700; padding: 3px 8px; background: rgba(2, 195, 154, 0.15); color: var(--secondary);">Highly Affordable</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Amortization Schedule Table -->
-          <div class="chart-card" style="margin-top: 20px;">
-            <h4 class="breakdown-title" id="lbl-schedule-title">Amortization Schedule</h4>
-            <p class="limit-desc" id="lbl-schedule-subtitle" style="margin-bottom: 12px; margin-top: -6px;">Month-by-month principal and interest breakdown.</p>
-            
-            <div class="table-wrapper" style="max-height: 250px; overflow-y: auto;">
-              <table class="lender-table" style="font-size: 0.8rem; width: 100%;">
-                <thead>
-                  <tr>
-                    <th id="th-sched-month">Month</th>
-                    <th id="th-sched-emi">EMI</th>
-                    <th id="th-sched-principal">Principal</th>
-                    <th id="th-sched-interest">Interest</th>
-                    <th id="th-sched-balance">Balance</th>
-                  </tr>
-                </thead>
-                <tbody id="plan-schedule-body">
-                  <!-- Dynamically populated -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- CTAs -->
-          <div class="action-footer" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-            <button id="plan-apply-btn" class="btn btn-primary btn-glow" style="width: 100%;">
-              <span id="plan-apply-btn-text">Apply for this Loan</span>
-            </button>
-            <button id="plan-back-btn" class="btn btn-secondary btn-text-only" style="width: 100%;">
-              <span id="plan-back-btn-text">← Back to Score</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= DOCUMENT VAULT SCREEN ================= -->
-        <section id="vault-screen" class="app-screen">
-          <div class="comparison-header">
-            <h2 id="vault-headline" class="result-title">Encrypted Document Vault</h2>
-            <p id="vault-tagline" class="result-desc">Manage your digital footprints and RBI Account Aggregator logs.</p>
-          </div>
-
-          <!-- Profile Completeness -->
-          <div class="chart-card" style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span id="lbl-vault-completeness" style="font-size: 0.8rem; font-weight: 600; color: var(--text-sub);">Profile Completeness</span>
-              <strong id="vault-completeness-pct" style="font-size: 0.95rem; font-weight: 700; color: var(--secondary);">42%</strong>
-            </div>
-            <div class="chart-track" style="height: 12px; border-radius: 6px; background: rgba(255,255,255,0.05);">
-              <div id="vault-completeness-fill" class="chart-bar-fill" style="width: 42%; background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);"></div>
-            </div>
-            <div class="psych-summary-box" style="margin-top: 12px; background: rgba(244, 162, 97, 0.05); border: 1px solid rgba(244, 162, 97, 0.15); border-radius: 8px; padding: 10px; display: flex; gap: 8px; align-items: center;">
-              <span>💡</span>
-              <p id="vault-suggestion-msg" class="limit-desc" style="margin: 0; font-size: 0.78rem; color: var(--text-sub);">Adding your Aadhaar could increase your score by up to 18 points.</p>
-            </div>
-          </div>
-
-          <!-- Document Grid Slots -->
-          <div class="lenders-list" id="vault-grid-list" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
-            <!-- Rendered dynamically via app.js -->
-          </div>
-
-          <!-- Vault Actions -->
-          <div class="action-footer" style="display: flex; flex-direction: column; gap: 10px;">
-            <button id="vault-delete-btn" class="btn btn-secondary btn-glow" style="width: 100%; border: 1px solid var(--amber); color: var(--amber); background: rgba(244, 162, 97, 0.03);">
-              🗑️ <span id="vault-delete-btn-text">Delete All My Data</span>
-            </button>
-            <button id="vault-back-btn" class="btn btn-secondary btn-text-only" style="width: 100%;">
-              <span id="vault-back-btn-text">← Back to Score</span>
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= PRIVACY / FEDERATED LEARNING SCREEN ================= -->
-        <section id="privacy-screen" class="app-screen">
-          <div class="comparison-header">
-            <div class="fl-hero-badge">
-              <span class="fl-badge-dot"></span>
-              <span id="fl-badge-text">Federated Learning Architecture</span>
-            </div>
-            <h2 id="fl-headline" class="result-title" style="font-size:1.25rem; line-height:1.4;">How We Protect<br>Your Data</h2>
-            <p id="fl-tagline" class="result-desc" style="margin-top:6px;">Every computation stays on your device. Only tiny encrypted gradients travel to our servers.</p>
-          </div>
-
-          <!-- ===== ANIMATED FEDERATED LEARNING DIAGRAM ===== -->
-          <div class="fl-canvas" id="fl-canvas">
-
-            <!-- SVG for connection lines + animated packets -->
-            <svg class="fl-svg" id="fl-svg" viewBox="0 0 340 220" preserveAspectRatio="xMidYMid meet">
-              <!-- Left phone → server lines -->
-              <line id="fl-line-1" x1="72" y1="52"  x2="170" y2="110" class="fl-line" />
-              <line id="fl-line-2" x1="72" y1="110" x2="170" y2="110" class="fl-line" />
-              <line id="fl-line-3" x1="72" y1="168" x2="170" y2="110" class="fl-line" />
-              <!-- Server → model line -->
-              <line id="fl-line-4" x1="170" y1="110" x2="268" y2="110" class="fl-line fl-line-right" />
-
-              <!-- NO-RAW-DATA crossed arrow (diagonal, red) -->
-              <line x1="72" y1="40" x2="170" y2="110" class="fl-forbidden-line" id="fl-forbidden" style="opacity:0;" />
-              <line x1="72" y1="110" x2="170" y2="40"  class="fl-cross-mark"    id="fl-crossmark"  style="opacity:0;" />
-
-              <!-- Animated gradient packets — phone → server -->
-              <circle id="fl-pkt-1" r="5" class="fl-packet" style="opacity:0;" />
-              <circle id="fl-pkt-2" r="5" class="fl-packet" style="opacity:0;" />
-              <circle id="fl-pkt-3" r="5" class="fl-packet" style="opacity:0;" />
-              <!-- Animated weight packets — server → phones (return) -->
-              <circle id="fl-ret-1" r="5" class="fl-packet fl-packet-return" style="opacity:0;" />
-              <circle id="fl-ret-2" r="5" class="fl-packet fl-packet-return" style="opacity:0;" />
-              <circle id="fl-ret-3" r="5" class="fl-packet fl-packet-return" style="opacity:0;" />
-              <!-- Server → model update pulse -->
-              <circle id="fl-model-pkt" r="5" class="fl-packet fl-packet-model" style="opacity:0;" />
-
-              <!-- Label: "Encrypted Gradients Only — 48KB" -->
-              <text x="121" y="96" class="fl-pkt-label" id="fl-pkt-label" style="opacity:0;">🔒 Encrypted Gradients — 48KB</text>
-              <!-- Label: "Improved Model Sent Back" -->
-              <text x="121" y="132" class="fl-pkt-label fl-pkt-label-return" id="fl-ret-label" style="opacity:0;">↩ Improved Model Sent Back</text>
-              <!-- Label: "Raw Data NEVER Leaves" -->
-              <text x="14" y="30" class="fl-raw-label" id="fl-raw-label" style="opacity:0;">🚫 Raw data never leaves</text>
-            </svg>
-
-            <!-- Left column: 3 borrower phone nodes -->
-            <div class="fl-nodes fl-nodes-left">
-              <div class="fl-node" id="fl-phone-1">
-                <div class="fl-node-icon" id="fl-phone-icon-1">📱</div>
-                <div class="fl-node-label" id="fl-phone-lbl-1">Borrower A</div>
-                <div class="fl-node-status" id="fl-phone-status-1">Idle</div>
-              </div>
-              <div class="fl-node" id="fl-phone-2">
-                <div class="fl-node-icon" id="fl-phone-icon-2">📱</div>
-                <div class="fl-node-label" id="fl-phone-lbl-2">Borrower B</div>
-                <div class="fl-node-status" id="fl-phone-status-2">Idle</div>
-              </div>
-              <div class="fl-node" id="fl-phone-3">
-                <div class="fl-node-icon" id="fl-phone-icon-3">📱</div>
-                <div class="fl-node-label" id="fl-phone-lbl-3">Borrower C</div>
-                <div class="fl-node-status" id="fl-phone-status-3">Idle</div>
-              </div>
-            </div>
-
-            <!-- Centre: SahayCredit Server -->
-            <div class="fl-nodes fl-nodes-center">
-              <div class="fl-node fl-node-server" id="fl-server">
-                <div class="fl-node-icon">🖥️</div>
-                <div class="fl-node-label" id="fl-server-lbl">SahayCredit<br>Server</div>
-                <div class="fl-node-status" id="fl-server-status">Waiting</div>
-              </div>
-            </div>
-
-            <!-- Right: XGBoost Model -->
-            <div class="fl-nodes fl-nodes-right">
-              <div class="fl-node fl-node-model" id="fl-model">
-                <div class="fl-node-icon">🧠</div>
-                <div class="fl-node-label" id="fl-model-lbl">XGBoost<br>Model</div>
-                <div class="fl-node-status" id="fl-model-status">v2.3.1</div>
-              </div>
-            </div>
-
-          </div><!-- /fl-canvas -->
-
-          <!-- Phase status banner -->
-          <div class="fl-phase-banner" id="fl-phase-banner">
-            <span class="fl-phase-dot" id="fl-phase-dot"></span>
-            <span id="fl-phase-text">Initialising federated round...</span>
-          </div>
-
-          <!-- ===== STAT CARDS ===== -->
-          <div class="fl-stats-row">
-            <div class="fl-stat-card">
-              <div class="fl-stat-icon">📤</div>
-              <div class="fl-stat-value" id="fl-stat-raw">0 bytes</div>
-              <div class="fl-stat-label" id="fl-lbl-raw">Raw data transmitted to server</div>
-            </div>
-            <div class="fl-stat-card">
-              <div class="fl-stat-icon">📦</div>
-              <div class="fl-stat-value">~48 KB</div>
-              <div class="fl-stat-label" id="fl-lbl-gradient">Gradient size per round</div>
-            </div>
-            <div class="fl-stat-card">
-              <div class="fl-stat-icon">📈</div>
-              <div class="fl-stat-value">+0.3%</div>
-              <div class="fl-stat-label" id="fl-lbl-accuracy">Model accuracy gain/round</div>
-            </div>
-          </div>
-
-          <!-- ===== DATA SPLIT TOGGLE ===== -->
-          <div class="fl-split-section">
-            <div class="fl-split-toggle-row">
-              <span id="fl-split-toggle-label">Show me what stays on device vs. what leaves</span>
-              <label class="switch-toggle" aria-label="Toggle data split view">
-                <input type="checkbox" id="fl-split-toggle">
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-
-            <div class="fl-split-columns" id="fl-split-columns" style="display:none;">
-              <div class="fl-split-col fl-split-phone">
-                <div class="fl-split-header">
-                  <span>📱</span>
-                  <strong id="fl-split-phone-hdr">Stays on Your Phone</strong>
-                </div>
-                <ul class="fl-split-list" id="fl-split-phone-list">
-                  <li>📊 Raw UPI transactions</li>
-                  <li>📱 Mobile bill records</li>
-                  <li>🛒 E-commerce history</li>
-                  <li>📍 Geolocation logs</li>
-                  <li>🧾 GST records</li>
-                  <li>💳 Bank statements</li>
-                  <li>🆔 Aadhaar / PAN scan</li>
-                </ul>
-              </div>
-              <div class="fl-split-col fl-split-server">
-                <div class="fl-split-header">
-                  <span>🖥️</span>
-                  <strong id="fl-split-server-hdr">Leaves Your Phone</strong>
-                </div>
-                <ul class="fl-split-list" id="fl-split-server-list">
-                  <li>🔒 Encrypted gradient #1</li>
-                  <li>🔒 Encrypted gradient #2</li>
-                  <li>🔒 Encrypted gradient #3</li>
-                  <li class="fl-split-note" id="fl-split-note">~48KB total · AES-256-GCM · No PII</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- ===== FOOTER ATTRIBUTION ===== -->
-          <div class="fl-footer-note">
-            <p id="fl-footer-text">This architecture is called <strong>Federated Learning</strong>. Developed by Google. Used by SahayCredit to protect <strong>190M borrowers</strong>.</p>
-          </div>
-
-          <!-- CTAs -->
-          <div class="action-footer" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
-            <button id="fl-back-btn" class="btn btn-secondary btn-text-only" style="width:100%;">
-              <span id="fl-back-btn-text">← Back to Score</span>
-            </button>
-          </div>
-        </section>
-
-      </main>
-      <!-- Mobile Demo Hub Slide-Over Drawer -->
-      <div id="mobile-demo-hub-drawer" class="mobile-hub-drawer" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(13, 27, 42, 0.98); border-top: 1px solid var(--border-active); border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 100; padding: 20px; box-sizing: border-box; transform: translateY(105%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); backdrop-filter: blur(25px); box-shadow: 0 -15px 40px rgba(0,0,0,0.6);">
-        <div class="mobile-hub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
-          <span class="mobile-hub-title" style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.2px;">⚡ Demo Hub</span>
-          <button id="close-hub-drawer-btn" class="close-drawer-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px;">&times;</button>
+        <div class="hero-image">
+            <img src="hero_image.jpg" alt="SahayCredit Alternate Credit Score App in Hand">
         </div>
-        <div class="mobile-hub-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 420px; overflow-y: auto;">
+    </main>
 
-          <!-- Borrower Side -->
-          <div style="display: flex; align-items: center; gap: 5px; padding: 0 0 2px 0;">
-            <span style="font-size: 0.72rem; color: #8ce1ec; line-height: 1;" aria-hidden="true">●</span>
-            <span style="font-size: 0.55rem; font-weight: 700; text-transform: uppercase; background: rgba(2, 128, 144, 0.15); color: #8ce1ec; padding: 2px 7px; border-radius: 8px; border: 1px solid rgba(2, 128, 144, 0.25); letter-spacing: 0.4px;">Borrower Side</span>
-          </div>
-          <div class="mobile-hub-item active" id="btn-mobile-onboarding" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(2, 128, 144, 0.1); border: 1px solid rgba(2, 128, 144, 0.3); border-radius: 12px; cursor: pointer;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">📱</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Borrower Onboarding</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Self-assessment flow (Active)</p>
-            </div>
-          </div>
-          <a href="demo.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">⚙️</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Kirana Simulator</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Configure persona & test cases</p>
-            </div>
-          </a>
-
-          <!-- Lender Side -->
-          <div style="display: flex; align-items: center; gap: 5px; padding: 6px 0 2px 0;">
-            <span style="font-size: 0.72rem; color: #b3adff; line-height: 1;" aria-hidden="true">●</span>
-            <span style="font-size: 0.55rem; font-weight: 700; text-transform: uppercase; background: rgba(108, 99, 255, 0.12); color: #b3adff; padding: 2px 7px; border-radius: 8px; border: 1px solid rgba(108, 99, 255, 0.25); letter-spacing: 0.4px;">Lender Side</span>
-          </div>
-          <a href="lender.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🏦</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Lender Portal</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Incoming pool & audit log</p>
-            </div>
-          </a>
-          <a href="map.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🗺️</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Geo-Risk Map</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">GIS regional credit gaps</p>
-            </div>
-          </a>
-
-          <!-- Behind the Scenes -->
-          <div style="display: flex; align-items: center; gap: 5px; padding: 6px 0 2px 0;">
-            <span style="font-size: 0.72rem; color: #c8cdd3; line-height: 1;" aria-hidden="true">●</span>
-            <span style="font-size: 0.55rem; font-weight: 700; text-transform: uppercase; background: rgba(255, 255, 255, 0.06); color: #c8cdd3; padding: 2px 7px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); letter-spacing: 0.4px;">Behind the Scenes</span>
-          </div>
-          <a href="ml_pipeline.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">🧠</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">ML Pipeline</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Optuna tuning & metrics</p>
-            </div>
-          </a>
-          <a href="pitch.html" class="mobile-hub-item" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; text-decoration: none; color: inherit; transition: all 0.2s ease;">
-            <span class="mobile-hub-icon" style="font-size: 1.3rem;">📊</span>
-            <div class="mobile-hub-info">
-              <h4 style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">Pitch Deck</h4>
-              <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Slides & architecture overview</p>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div id="mobile-hub-overlay" class="mobile-hub-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;"></div>
-    </div>
-  </div>
-
-  </div> <!-- Close page-wrapper -->
-
-  <!-- Custom logic -->
-  <script src="app.js"></script>
 </body>
 </html>

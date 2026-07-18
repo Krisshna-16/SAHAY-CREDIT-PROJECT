@@ -341,27 +341,16 @@ function callMlScoringService(appRecord) {
       NAME_CONTRACT_TYPE: 'Cash loans'
     });
 
-    const mlUrlStr = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
-    let mlUrl;
-    try {
-      mlUrl = new URL(mlUrlStr);
-    } catch (e) {
-      mlUrl = new URL('http://127.0.0.1:8000');
-    }
-
-    const isHttps = mlUrl.protocol === 'https:';
-    const client = isHttps ? require('https') : require('http');
-
     const options = {
-      hostname: mlUrl.hostname,
-      port: mlUrl.port || (isHttps ? 443 : 80),
+      hostname: '127.0.0.1',
+      port: 8000,
       path: '/credit/score',
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
       timeout: 2000
     };
 
-    const req = client.request(options, (res) => {
+    const req = http.request(options, (res) => {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
