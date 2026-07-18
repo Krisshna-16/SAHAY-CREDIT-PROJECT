@@ -765,7 +765,7 @@ function renderTable() {
       <td style="color: ${confidenceColor}; font-weight: 700;">${app.confidence}%</td>
       <td>₹${app.loanAmount.toLocaleString('en-IN')}</td>
       <td style="color: var(--secondary); font-weight: 600;">${app.suggestedRate}% p.a.</td>
-      <td>${app.signalsCount} / 10</td>
+      <td>${app.signalsCount} / 11</td>
       <td><span class="fraud-badge ${fraudBadgeClass}">${fraudLabel}</span></td>
       <td><span class="${statusClass}">${statusText}</span></td>
     `;
@@ -897,7 +897,8 @@ function selectApplicant(app) {
     { key: 'salaryConsistency', label: '💰 वेतन निरंतरता', color: '#4CC9F0' },
     { key: 'failedTx', label: '⚠️ विफल लेनदेन', color: '#E63946' },
     { key: 'merchantDiversity', label: '🏪 व्यापारी विविधता', color: '#7B2FBE' },
-    { key: 'refundRatio', label: '↩️ धनवापसी अनुपात', color: '#F4A261' }
+    { key: 'refundRatio', label: '↩️ धनवापसी अनुपात', color: '#F4A261' },
+    { key: 'behaviour', label: '🏦 व्यवहार जोखिम (एए)', color: '#00B4D8' }
   ] : [
     { key: 'upi', label: '📊 UPI Transactions', color: '#028090' },
     { key: 'mobile', label: '📱 Mobile Bills', color: '#02C39A' },
@@ -908,7 +909,8 @@ function selectApplicant(app) {
     { key: 'salaryConsistency', label: '💰 Salary Consistency', color: '#4CC9F0' },
     { key: 'failedTx', label: '⚠️ Failed Transactions', color: '#E63946' },
     { key: 'merchantDiversity', label: '🏪 Merchant Diversity', color: '#7B2FBE' },
-    { key: 'refundRatio', label: '↩️ Refund Ratio', color: '#F4A261' }
+    { key: 'refundRatio', label: '↩️ Refund Ratio', color: '#F4A261' },
+    { key: 'behaviour', label: '🏦 Behaviour Risk (AA)', color: '#00B4D8' }
   ];
   
   const notSharedText = state.currentLanguage === 'hi' ? 'साझा नहीं किया' : 'Not Shared';

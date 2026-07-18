@@ -1880,7 +1880,7 @@ function renderCalculatedResults() {
       });
 
       compositeExplanation.textContent = isHi && data.compositeExplanation
-        ? data.compositeExplanation.replace('Composite from', 'कम्पोजिट विवरण:').replace('Core model', 'कोर मॉडल').replace('E-commerce', 'ई-कॉमर्स').replace('Merchant ratings', 'व्यापारी रेटिंग')
+        ? data.compositeExplanation.replace('Composite from', 'कम्पोजिट विवरण:').replace('Core model', 'कोर मॉडल').replace('E-commerce', 'ई-कॉमर्स').replace('Merchant ratings', 'व्यापारी रेटिंग').replace('Behaviour', 'व्यवहार जोखिम')
         : (data.compositeExplanation || '');
     } else {
       compositeContainer.style.display = 'none';
@@ -1893,7 +1893,7 @@ function renderCalculatedResults() {
   if (dsIndicator && dsIndicatorText) {
     const isHi = lang === 'hi';
     const sourceCount = data.sourceCount || (data.compositeBreakdown ? Object.keys(data.compositeBreakdown).length : 1);
-    const totalAvailable = 3; // core + ecommerce + merchant
+    const totalAvailable = 4; // core + ecommerce + merchant + behaviour
     dsIndicator.style.display = 'inline-block';
     dsIndicatorText.textContent = isHi
       ? `स्कोर ${totalAvailable} में से ${sourceCount} उपलब्ध डेटा स्रोतों पर आधारित`
@@ -1907,8 +1907,9 @@ function renderCalculatedResults() {
     const isHi = lang === 'hi';
     const ecomConsented = document.getElementById('consent-ecom-toggle')?.checked || false;
     const merchantConsented = document.getElementById('consent-gst-toggle')?.checked || false;
+    const behaviourConsented = document.getElementById('consent-behaviour-toggle')?.checked || false;
 
-    if (ecomConsented || merchantConsented) {
+    if (ecomConsented || merchantConsented || behaviourConsented) {
       permPanel.style.display = 'block';
       const permHeadline = document.getElementById('permissions-headline');
       if (permHeadline) {
@@ -1918,7 +1919,8 @@ function renderCalculatedResults() {
 
       const sources = [
         { id: 'ecommerce', active: ecomConsented, labelEn: 'E-Commerce Purchase History', labelHi: 'ई-कॉमर्स खरीद इतिहास' },
-        { id: 'merchantRatings', active: merchantConsented, labelEn: 'Business/Merchant Ratings', labelHi: 'व्यापार/व्यापारी रेटिंग' }
+        { id: 'merchantRatings', active: merchantConsented, labelEn: 'Business/Merchant Ratings', labelHi: 'व्यापार/व्यापारी रेटिंग' },
+        { id: 'behaviour', active: behaviourConsented, labelEn: 'Bank Transaction History (AA)', labelHi: 'बैंक लेनदेन इतिहास (एए)' }
       ];
 
       sources.forEach(src => {

@@ -1,0 +1,157 @@
+{
+  "with_leakage": {
+    "auc_train": 0.9640648913376186,
+    "auc_val": 0.9746556473829202,
+    "auc_test": 0.9224043715846995,
+    "confusion_matrix": [
+      [
+        101,
+        21
+      ],
+      [
+        1,
+        14
+      ]
+    ],
+    "precision_bad": 0.4,
+    "recall_bad": 0.9333333333333333,
+    "f1_bad": 0.56,
+    "pr_auc": 0.6167549409654672,
+    "brier_score": 0.12739421171238843,
+    "iv_report": {
+      "cash_flow_stability": 0.7194194777501692,
+      "balance_trend": 0.6253822993493872,
+      "income_to_expense_ratio": 0.10810011169133037,
+      "spending_volatility": 0.2719941207424357,
+      "recurring_payment_discipline": 9.072894643900886e-05,
+      "salary_regularity": 0.9463082445373012,
+      "income_consistency": 0.38381334828788716,
+      "monthly_income": 0.06852101924694001,
+      "savings_ratio": 0.3414937389994033,
+      "financial_stability_index": 3.8208546247977395
+    },
+    "shap_importance": {
+      "cash_flow_stability": 0.11655680085029443,
+      "balance_trend": 0.35309228369457696,
+      "income_to_expense_ratio": 0.37515436033537874,
+      "spending_volatility": 0.08062250957626428,
+      "recurring_payment_discipline": 1.789585101667362e-20,
+      "salary_regularity": 0.478621414564976,
+      "income_consistency": 0.8185304377897467,
+      "monthly_income": 0.0820175172258193,
+      "savings_ratio": 0.41158134709775823,
+      "financial_stability_index": 2.8896713988212483
+    },
+    "coefficients": {
+      "cash_flow_stability": 0.18250907155937202,
+      "balance_trend": -0.4621868596822498,
+      "income_to_expense_ratio": -1.1136053917586177,
+      "spending_volatility": -0.15244269237019648,
+      "recurring_payment_discipline": -0.0007935581338601277,
+      "salary_regularity": 0.4934285805788922,
+      "income_consistency": 1.4071352824483931,
+      "monthly_income": 0.4060786457905256,
+      "savings_ratio": -0.7748894166776229,
+      "financial_stability_index": -1.5773727704379825
+    }
+  },
+  "without_leakage": {
+    "auc_train": 0.8423018059381696,
+    "auc_val": 0.5487603305785124,
+    "auc_test": 0.7628415300546448,
+    "confusion_matrix": [
+      [
+        87,
+        35
+      ],
+      [
+        5,
+        10
+      ]
+    ],
+    "precision_bad": 0.2222222222222222,
+    "recall_bad": 0.6666666666666666,
+    "f1_bad": 0.3333333333333333,
+    "pr_auc": 0.38126065382495,
+    "brier_score": 0.19159655917655743,
+    "iv_report": {
+      "cash_flow_stability": 0.7194194777501692,
+      "balance_trend": 0.6253822993493872,
+      "income_to_expense_ratio": 0.10810011169133037,
+      "spending_volatility": 0.2719941207424357,
+      "salary_regularity": 0.9463082445373012,
+      "income_consistency": 0.38381334828788716,
+      "monthly_income": 0.06852101924694001,
+      "savings_ratio": 0.3414937389994033
+    },
+    "shap_importance": {
+      "cash_flow_stability": 0.34218835910087403,
+      "balance_trend": 0.5249592574339669,
+      "income_to_expense_ratio": 0.33131203395226877,
+      "spending_volatility": 0.3372676720464388,
+      "salary_regularity": 0.7962188818655619,
+      "income_consistency": 0.014641398634967258,
+      "monthly_income": 0.1762049782588111,
+      "savings_ratio": 0.046148451283482085
+    },
+    "coefficients": {
+      "cash_flow_stability": -0.5358115464934516,
+      "balance_trend": -0.6871554034423589,
+      "income_to_expense_ratio": -0.9834641586837156,
+      "spending_volatility": -0.6377126220258982,
+      "salary_regularity": -0.820851597428266,
+      "income_consistency": 0.025170021360825984,
+      "monthly_income": 0.8724121550263402,
+      "savings_ratio": -0.08688427390549233
+    }
+  },
+  "leakage_findings": [
+    {
+      "feature": "recurring_payment_discipline",
+      "issue": "CRITICAL: Reads loan.status (B/D) which IS the target label. This directly encodes the answer into a feature.",
+      "severity": "CRITICAL",
+      "lines": "featureEngineering.py:164-171",
+      "effect": "Accounts with B/D loans get score -= 80, which deterministically separates defaults from non-defaults."
+    },
+    {
+      "feature": "financial_stability_index",
+      "issue": "Composite feature includes recurring_payment_discipline (weight=0.25). Contaminated via transitivity.",
+      "severity": "HIGH",
+      "lines": "featureEngineering.py:300-360",
+      "effect": "FSI gets an outsized IV=3.83 because 25% of its value is target-derived."
+    }
+  ],
+  "dataset": {
+    "name": "Berka PKDD 1999",
+    "total_loans": 682,
+    "usable_samples": 681,
+    "non_default": 606,
+    "default": 75,
+    "train_size": 408,
+    "val_size": 136,
+    "test_size": 137,
+    "split_method": "customer-level stratified (account_id)"
+  },
+  "features": [
+    "cash_flow_stability",
+    "balance_trend",
+    "income_to_expense_ratio",
+    "spending_volatility",
+    "recurring_payment_discipline",
+    "salary_regularity",
+    "income_consistency",
+    "monthly_income",
+    "savings_ratio",
+    "financial_stability_index"
+  ],
+  "clean_features": [
+    "cash_flow_stability",
+    "balance_trend",
+    "income_to_expense_ratio",
+    "spending_volatility",
+    "salary_regularity",
+    "income_consistency",
+    "monthly_income",
+    "savings_ratio"
+  ]
+}

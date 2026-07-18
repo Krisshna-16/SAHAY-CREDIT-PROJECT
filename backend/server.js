@@ -6,6 +6,7 @@ const { grantConsent, revokeConsent, getConsentSummary, getAuditLog } = require(
 const { computeCompositeScore } = require('./compositeScoring');
 const { loadCalibration: loadEcomCal, computeEcommerceScore } = require('./datasources/ecommerce');
 const { loadCalibration: loadMerchantCal, computeMerchantScore } = require('./datasources/merchant');
+const { loadBehaviourModel, computeBehaviourScore } = require('./behaviourInference');
 
 // Phase 3 modules
 const { processEkyc, getEkycStatus, isEkycVerified, getEkycAuditLog, getAadhaarByBorrower, getDevicesForAadhaar, registerAadhaarDevice } = require('./ekyc');
@@ -49,6 +50,14 @@ loadPdoCalibration();
 // Load alt-data calibrations at startup
 loadEcomCal();
 loadMerchantCal();
+
+// Load behaviour model at startup
+const behaviourLoaded = loadBehaviourModel();
+if (behaviourLoaded) {
+  console.log('[SahayCredit] Behaviour model loaded — AA-based scoring active.');
+} else {
+  console.log('[SahayCredit] Behaviour model not available — AA scoring disabled.');
+}
 
 // In-memory database of loan applications for partner NBFCs
 let applications = [
@@ -316,36 +325,17 @@ app.get('/api/applications', (req, res) => {
     // Calculate dynamic composite breakdown for demo applications
     const hasEcom = appRecord.signals && appRecord.signals.ecommerce && appRecord.signals.ecommerce.rating > 0;
     const hasMerchant = appRecord.signals && appRecord.signals.merchantRatings && appRecord.signals.merchantRatings.rating > 0;
+    const hasBehaviour = appRecord.signals && appRecord.signals.behaviour && appRecord.signals.behaviour.rating > 0;
 
-    let compositeBreakdown = {
-      core: { score: appRecord.score, weight: 1.0, label: 'Core Financial Model (XGBoost)' }
-    };
-    let compositeWeights = { core: 1.0 };
-    let sourceCount = 1;
+    // Use compositeScoring engine for dynamic breakdown
+    const ecomResult = hasEcom ? { subScore: appRecord.signals.ecommerce.rating, contributing: true, features: {}, explanation: appRecord.signals.ecommerce.detail } : null;
+    const merchResult = hasMerchant ? { subScore: appRecord.signals.merchantRatings.rating, contributing: true, features: {}, explanation: appRecord.signals.merchantRatings.detail } : null;
+    const behResult = hasBehaviour ? { subScore: appRecord.signals.behaviour.rating, contributing: true, features: {}, coefficientBreakdown: {}, explanation: appRecord.signals.behaviour.detail } : null;
 
-    if (hasEcom && hasMerchant) {
-      sourceCount = 3;
-      compositeWeights = { core: 0.60, ecommerce: 0.20, merchant: 0.20 };
-      compositeBreakdown = {
-        core: { score: appRecord.score, weight: 0.60, label: 'Core Financial Model (XGBoost)' },
-        ecommerce: { score: Math.round(300 + (appRecord.signals.ecommerce.rating / 100) * 600), subScore: appRecord.signals.ecommerce.rating, weight: 0.20, label: 'E-Commerce Behavior' },
-        merchant: { score: Math.round(300 + (appRecord.signals.merchantRatings.rating / 100) * 600), subScore: appRecord.signals.merchantRatings.rating, weight: 0.20, label: 'Merchant Ratings (MSME)' }
-      };
-    } else if (hasEcom) {
-      sourceCount = 2;
-      compositeWeights = { core: 0.75, ecommerce: 0.25 };
-      compositeBreakdown = {
-        core: { score: appRecord.score, weight: 0.75, label: 'Core Financial Model (XGBoost)' },
-        ecommerce: { score: Math.round(300 + (appRecord.signals.ecommerce.rating / 100) * 600), subScore: appRecord.signals.ecommerce.rating, weight: 0.25, label: 'E-Commerce Behavior' }
-      };
-    } else if (hasMerchant) {
-      sourceCount = 2;
-      compositeWeights = { core: 0.75, merchant: 0.25 };
-      compositeBreakdown = {
-        core: { score: appRecord.score, weight: 0.75, label: 'Core Financial Model (XGBoost)' },
-        merchant: { score: Math.round(300 + (appRecord.signals.merchantRatings.rating / 100) * 600), subScore: appRecord.signals.merchantRatings.rating, weight: 0.25, label: 'Merchant Ratings (MSME)' }
-      };
-    }
+    const compositeResult = computeCompositeScore(appRecord.score, ecomResult, merchResult, behResult);
+    const compositeBreakdown = compositeResult.breakdown;
+    const compositeWeights = compositeResult.weights;
+    const sourceCount = compositeResult.sourceCount;
 
     return {
       ...appRecord,
@@ -514,6 +504,10 @@ app.post('/api/score', (req, res) => {
     // If borrowerId is provided, check for alt-data consent and compute sub-scores
     let ecommerceResult = null;
     let merchantResult = null;
+    let behaviourResult = null;
+
+    // Extract behaviourData from request body
+    const behaviourData = req.body.behaviourData;
 
     if (borrowerId) {
       // E-Commerce sub-score (if consented and data provided)
@@ -525,11 +519,16 @@ app.post('/api/score', (req, res) => {
       if (merchantData && Array.isArray(merchantData) && isMSME) {
         merchantResult = computeMerchantScore(borrowerId, merchantData, true);
       }
+
+      // Behaviour risk sub-score (if consented and AA data provided)
+      if (behaviourData) {
+        behaviourResult = computeBehaviourScore(borrowerId, behaviourData);
+      }
     }
 
-    // Compute composite score
+    // Compute composite score (now includes behaviour as 4th source)
     const composite = computeCompositeScore(
-      coreResult.score, ecommerceResult, merchantResult
+      coreResult.score, ecommerceResult, merchantResult, behaviourResult
     );
 
     // Build extended response (additive — core fields remain unchanged)

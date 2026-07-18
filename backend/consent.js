@@ -44,6 +44,13 @@ const DATA_SOURCES = {
     purposeHi: 'अपनी क्रेडिट मूल्यांकन को मजबूत करने के लिए व्यापार/व्यापारी रेटिंग साझा करें',
     description: 'For MSME applicants: analyzes customer review trends, sentiment patterns, and review volume consistency to assess business health.',
     msmeOnly: true
+  },
+  behaviour: {
+    id: 'behaviour',
+    name: 'Bank Transaction History (AA)',
+    purposeEn: 'Share bank transaction history via Account Aggregator to strengthen your credit assessment',
+    purposeHi: 'अपनी क्रेडिट मूल्यांकन को मजबूत करने के लिए अकाउंट एग्रीगेटर के माध्यम से बैंक लेनदेन इतिहास साझा करें',
+    description: 'Analyzes cash flow stability, income regularity, spending patterns, and savings behaviour from consented bank transaction data to compute a Behaviour Risk Score.'
   }
 };
 
