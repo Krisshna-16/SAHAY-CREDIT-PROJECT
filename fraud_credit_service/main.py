@@ -23,6 +23,10 @@ Model files (put these in the same folder as this script):
 
 import json
 import os
+import sqlite3
+import uuid
+import hashlib
+from datetime import datetime, timezone
 from typing import Optional
 
 import numpy as np
@@ -38,6 +42,64 @@ app = FastAPI(title="SahayCredit Scoring Service")
 MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ============================================================
+# Audit logging — self-contained SQLite, no external DB needed.
+# Every prediction gets a unique audit ID + model version, per the
+# fraud plan's stated requirement: "Every prediction must be logged
+# with a unique audit ID. Model version and feature version must be
+# stored for traceability."
+# ============================================================
+
+AUDIT_DB_PATH = os.path.join(MODEL_DIR, "audit_log.db")
+
+def _init_audit_db():
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS prediction_log (
+            audit_id TEXT PRIMARY KEY,
+            timestamp TEXT NOT NULL,
+            endpoint TEXT NOT NULL,
+            model_name TEXT NOT NULL,
+            model_version TEXT NOT NULL,
+            input_hash TEXT NOT NULL,
+            output_json TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+_init_audit_db()
+
+# Model version = a hash of the model file itself. This changes automatically
+# any time the model file is retrained/replaced, so you never have to
+# remember to bump a version number by hand.
+def _file_hash(path):
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()[:12]
+
+CREDIT_MODEL_VERSION = _file_hash(os.path.join(MODEL_DIR, "sahaycredit_xgb.json"))
+FRAUD_MODEL_VERSION = _file_hash(os.path.join(MODEL_DIR, "fraud_model_ieee.txt"))
+
+def log_prediction(endpoint: str, model_name: str, model_version: str, input_data: dict, output_data: dict) -> str:
+    audit_id = str(uuid.uuid4())
+    input_hash = hashlib.sha256(json.dumps(input_data, sort_keys=True, default=str).encode()).hexdigest()[:16]
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    conn.execute(
+        "INSERT INTO prediction_log VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (
+            audit_id,
+            datetime.now(timezone.utc).isoformat(),
+            endpoint,
+            model_name,
+            model_version,
+            input_hash,
+            json.dumps(output_data, default=str),
+        ),
+    )
+    conn.commit()
+    conn.close()
+    return audit_id
+
+
 # Load models + encoding maps once, at startup
 # ============================================================
 
@@ -262,12 +324,16 @@ def credit_score(applicant: CreditApplicant):
     score = prob_to_pdo_score(p_default)
     risk_level = credit_prob_to_risk_level(p_default)
     reason_codes = get_reason_codes(CREDIT_EXPLAINER, X)
-    return {
+    result = {
         "predicted_default_prob": round(p_default, 6),
         "credit_score": score,
         "risk_level": risk_level,
         "reason_codes": reason_codes,
+        "model_version": CREDIT_MODEL_VERSION,
     }
+    audit_id = log_prediction("credit/score", "sahaycredit_xgb", CREDIT_MODEL_VERSION, applicant.dict(), result)
+    result["audit_id"] = audit_id
+    return result
 
 
 @app.post("/fraud/score")
@@ -276,7 +342,27 @@ def fraud_score(txn: FraudTransaction):
     prob = float(fraud_model.predict(X)[0])
     result = fraud_prob_to_result(prob)
     result["reason_codes"] = get_reason_codes(FRAUD_EXPLAINER, X)
+    result["model_version"] = FRAUD_MODEL_VERSION
+    audit_id = log_prediction("fraud/score", "fraud_model_ieee", FRAUD_MODEL_VERSION, txn.features, result)
+    result["audit_id"] = audit_id
     return result
+
+
+@app.get("/audit/{audit_id}")
+def get_audit_record(audit_id: str):
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    row = conn.execute(
+        "SELECT audit_id, timestamp, endpoint, model_name, model_version, input_hash, output_json FROM prediction_log WHERE audit_id = ?",
+        (audit_id,),
+    ).fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(status_code=404, detail="Audit record not found")
+    return {
+        "audit_id": row[0], "timestamp": row[1], "endpoint": row[2],
+        "model_name": row[3], "model_version": row[4], "input_hash": row[5],
+        "output": json.loads(row[6]),
+    }
 
 
 @app.post("/decision")

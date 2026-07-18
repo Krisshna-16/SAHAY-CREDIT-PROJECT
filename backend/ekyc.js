@@ -183,6 +183,11 @@ function maskId(number, type) {
   }
   return 'XXXX';
 }
+function sha256(value) {
+  if (!value) return null;
+  const normalized = value.replace(/\s/g, '').toUpperCase();
+  return crypto.createHash('sha256').update(normalized).digest('hex');
+}
 
 
 // ── eKYC Status Management ──────────────────────────────────────────────────
@@ -195,6 +200,17 @@ function processEkyc(borrowerId, documentData, provider = 'sandbox') {
   const result = verifyIdentity(documentData, provider);
 
   const status = result.verified ? 'verified' : 'failed';
+  
+  let panNumberMasked = null;
+  let panNumberHash = null;
+  if (documentData.panNumber) {
+    const rawPan = documentData.panNumber.replace(/\s/g, '').toUpperCase();
+    if (/^[A-Z]{5}\d{4}[A-Z]$/.test(rawPan)) {
+      panNumberMasked = rawPan.slice(0, 2) + 'XXXXXX' + rawPan.slice(-2);
+      panNumberHash = sha256(rawPan);
+    }
+  }
+
   const record = {
     borrowerId,
     status,
@@ -203,6 +219,9 @@ function processEkyc(borrowerId, documentData, provider = 'sandbox') {
     mode: result.mode,
     documentType: documentData.type,
     documentNumberMasked: result.details?.extractedFields?.documentNumber || 'N/A',
+    documentNumberHash: result.verified ? sha256(documentData.number) : null,
+    panNumberMasked,
+    panNumberHash,
     verifiedAt: result.verified ? new Date().toISOString() : null,
     lastAttempt: new Date().toISOString(),
     attempts: (ekycStore.get(borrowerId)?.attempts || 0) + 1
@@ -252,6 +271,10 @@ function getEkycStatus(borrowerId) {
     provider: record.provider,
     mode: record.mode,
     documentType: record.documentType,
+    documentNumberMasked: record.documentNumberMasked,
+    documentNumberHash: record.documentNumberHash,
+    panNumberMasked: record.panNumberMasked,
+    panNumberHash: record.panNumberHash,
     verifiedAt: record.verifiedAt,
     lastAttempt: record.lastAttempt,
     attempts: record.attempts

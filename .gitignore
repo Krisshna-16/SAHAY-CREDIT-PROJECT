@@ -16,3 +16,6 @@ ml/models/sahaycredit_xgb.json
 __pycache__/
 *.pyc
 .venv/
+
+# Persistence Store
+backend/applications_store.json
